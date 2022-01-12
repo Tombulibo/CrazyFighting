@@ -13,6 +13,9 @@
 #include "TinyEngine/T_Sprite.h"
 #include "TinyEngine/T_Util.h"
 
+//定义vector容器类型的数据类型vSpriteSet
+typedef vector<T_Sprite*> vSpriteSet;
+
 class CrazyFighting :
     public T_Engine
 {
@@ -22,6 +25,11 @@ private:
     int wnd_width, wnd_height; //游戏窗口宽高
     POINT mouse_pt; //当前鼠标位置
     int op; //操作类型(op=0键盘; op=1鼠标)
+
+    //定义要使用的类对象
+    T_Sprite* player; //游戏玩家
+    vSpriteSet npc_set; //NPC角色集合
+    T_Scene t_scene;
 
     //定义功能函数
     void LoadMap(); //加载游戏地图场景
