@@ -12,12 +12,40 @@ CrazyFighting::CrazyFighting(HINSTANCE h_instance, LPCTSTR sz_winclass, LPCTSTR 
 	wnd_height = winheight;
 }
 
+void CrazyFighting::LoadMap()
+{
+}
+
+void CrazyFighting::LoadPlayer()
+{
+}
+
+void CrazyFighting::LoadNpc(int total)
+{
+}
+
+void CrazyFighting::UpdatePlayerPos(int dir)
+{
+}
+
+void CrazyFighting::UpdateNpcPos()
+{
+}
+
+void CrazyFighting::UpdateAnimation()
+{
+}
+
 void CrazyFighting::GameInit()
 {
+	GameState = GAME_START;
 }
 
 void CrazyFighting::GameLogic()
 {
+	if (GameState == GAME_RUN)
+	{
+	}
 }
 
 void CrazyFighting::GameEnd()
@@ -26,12 +54,48 @@ void CrazyFighting::GameEnd()
 
 void CrazyFighting::GamePaint(HDC hdc)
 {
+	if (GameState == GAME_START)
+	{
+	}
+	else if (GameState == GAME_ABOUT)
+	{
+	}
+	else if (GameState == GAME_HELP)
+	{
+	}
+	else if (GameState == GAME_RUN)
+	{
+	}
 }
 
 void CrazyFighting::GameKeyAction(int Action)
 {
+	if (GameState == GAME_START)
+	{
+	}
+	else if (GameState == GAME_ABOUT)
+	{
+	}
+	else if (GameState == GAME_HELP)
+	{
+	}
+	else if (GameState == GAME_RUN)
+	{
+	}
 }
 
 void CrazyFighting::GameMouseAction(int x, int y, int Action)
 {
+	if (GameState == GAME_START)
+	{
+	}
+	else if (GameState == GAME_ABOUT)
+	{
+	}
+	else if (GameState == GAME_HELP)
+	{
+	}
+	else if (GameState == GAME_RUN)
+	{
+	}
 }
