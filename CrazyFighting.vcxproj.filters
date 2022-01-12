@@ -14,4 +14,89 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TinyEngine\T_AI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyEngine\T_Audio.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyEngine\T_Display.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyEngine\T_Engine.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyEngine\T_Graph.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyEngine\T_Map.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyEngine\T_Menu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyEngine\T_Music.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyEngine\T_Scene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyEngine\T_Sprite.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TinyEngine\T_Util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AppMain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CrazyFighting.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TinyEngine\T_AI.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Audio.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Config.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Display.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Engine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Graph.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Layer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Map.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Menu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Music.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Scene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Sprite.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TinyEngine\T_Util.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CrazyFighting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
 </Project>
