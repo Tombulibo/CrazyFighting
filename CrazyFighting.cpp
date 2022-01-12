@@ -36,6 +36,10 @@ void CrazyFighting::UpdateAnimation()
 {
 }
 
+void CrazyFighting::LoadMyMenu()
+{
+}
+
 void CrazyFighting::GameInit()
 {
 	GameState = GAME_START;

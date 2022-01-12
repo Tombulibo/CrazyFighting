@@ -17,6 +17,10 @@ class CrazyFighting :
     public T_Engine
 {
 private:
+    //重新定义动画帧序列
+    static int FRAME_LEFT[20]; //左方向的帧动画
+    static int FRAME_RIGHT[20]; //右方向的帧动画
+
     //定义全局性的变量
     int scn_width, scn_height; //场景宽高
     int wnd_width, wnd_height; //游戏窗口宽高
@@ -30,6 +34,12 @@ private:
     void UpdatePlayerPos(int dir); //更新玩家位置
     void UpdateNpcPos(); //更新NPC位置
     void UpdateAnimation(); //更新游戏动画
+    void LoadMyMenu();
+
+    //游戏菜单类的对象
+    T_Menu main_menu;
+    T_Menu about_menu;
+    T_Menu help_menu;
     
 public:
     virtual ~CrazyFighting(void);
