@@ -35,6 +35,7 @@ private:
     vSpriteSet npc_set; //NPC角色集合
     T_Scene t_scene;
 
+
     //定义功能函数
     void LoadMap(); //加载游戏地图场景
     void LoadPlayer(); //加载游戏玩家
