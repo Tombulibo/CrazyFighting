@@ -14,6 +14,7 @@ CrazyFighting::CrazyFighting(HINSTANCE h_instance, LPCTSTR sz_winclass, LPCTSTR 
 
 void CrazyFighting::LoadMap()
 {
+
 }
 
 void CrazyFighting::LoadPlayer()
