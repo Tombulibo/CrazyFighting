@@ -4,6 +4,7 @@
 #include ".\\TinyEngine\\T_Scene.h"
 #include ".\\TinyEngine\\T_AI.h"
 #include "MyMenu.h"
+#include "CrazyMan.h"
 
 //定义vector容器类型的数据类型vSpriteSet
 typedef vector<T_Sprite*> vSpriteSet;
@@ -15,27 +16,28 @@ private:
     //重新定义动画帧序列
     static int FRAME_LEFT[20]; //左方向的帧动画
     static int FRAME_RIGHT[20]; //右方向的帧动画
-
+    static int FRAME_UP[20];
 
 
     //定义要使用的类对象
     T_Scene t_scene;		//游戏场景
-    T_Sprite* player;		//游戏玩家
+    CrazyMan* player;		//游戏玩家
 
 
     //定义全局性的变量
     int scn_width, scn_height; //场景宽高
     int wnd_width, wnd_height; //游戏窗口宽高
     POINT mouse_pt;				// 当前鼠标位置
-    bool opmode;					//操作方式
 
  
     //游戏菜单类的对象
+    T_Graph back;
     T_Graph menuArea;				//游戏运行菜单区域
     T_Menu gamemenu;				//游戏开始菜单类对象
     T_Menu aboutmenu;				//游戏关于菜单类对象
     T_Menu helpmenu;				//游戏帮助菜单类对象
     MyMenu runmenu;					//游戏运行菜单类对象
+
     //声音
     AudioDX ds;
     AudioDXBuffer backmusic_buffer;
@@ -45,8 +47,11 @@ private:
     AudioDXBuffer explosionSound;
 
     //定义功能函数
-    void LoadMap();					//加载游戏地图场景
-    void LoadPlayer();				//加载玩家角色
+    void LoadPlayer();								// 加载游戏玩家角色
+    void LoadMap();									// 加载游戏地图场景	
+
+    void UpdatePlayerPos();							// 更新玩家角色的位置
+    void UpdateAnimation();							// 更新角色动画帧序列号
 public:
     virtual ~CrazyFighting(void);
     CrazyFighting(HINSTANCE h_instance, LPCTSTR sz_winclass, LPCTSTR sz_title,

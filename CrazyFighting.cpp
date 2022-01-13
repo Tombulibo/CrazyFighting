@@ -3,16 +3,23 @@
 //重新定义帧序列
 int CrazyFighting::FRAME_LEFT[20] = { 0,0,1,1,1,1,2,2,2,2,0,0,1,1,1,1,2,2,2,2 };
 int CrazyFighting::FRAME_RIGHT[20] = { 3,3,4,4,4,4,5,5,5,5,3,3,4,4,4,4,5,5,5,5 };
+int CrazyFighting::FRAME_UP[20] = { 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11 };
 
-
+//加载地图
 void CrazyFighting::LoadMap()
 {
-	t_scene.LoadTxtMap("map\\mymap.txt");
+	//t_scene.LoadTxtMap("map\\mymap.txt");
+	t_scene.LoadTxtMap("map\\jump_map.txt");
+
 	scn_width = t_scene.getSceneLayers()->back().layer->GetWidth();
 	scn_height = t_scene.getSceneLayers()->back().layer->GetHeight();
 	//视图初始位置以地图作为参照
-	int scn_x = (wnd_width - scn_width) / 2;
-	int scn_y = (wnd_width - scn_height) / 2;
+	//int scn_x = (wnd_width - scn_width) / 2;
+	//int scn_y = (wnd_width - scn_height) / 2;
+	// 将游戏地图初始化为左上角
+	int scn_x = 0;
+	int scn_y = 0;
+
 	//将游戏地图初始化为屏幕中央位置
 	t_scene.InitScene(scn_x, scn_y, scn_width, scn_height, wnd_width, wnd_height);
 	//将所有地图图层定位在屏幕中央
@@ -24,27 +31,72 @@ void CrazyFighting::LoadMap()
 	}
 }
 
+//加载玩家位置
+void CrazyFighting::UpdatePlayerPos()
+{
+	if (player == NULL) return;
+	if (player->IsDead() == false && player->IsVisible() == true && player->IsActive() == true)
+	{
+		// 处理玩家的跳跃和左右移动	
+		if (player->getJumping())
+		{
+			player->SetSequence(FRAME_UP, 20);
+			player->jumpUpDown(t_scene.getBarrier());
+			t_scene.ScrollScene(player);//滚动背景
+		}
+		if (player->GetDir() == DIR_LEFT)
+		{
+			player->updatePostion(DIR_LEFT, 0, 0, t_scene.getBarrier());
+			t_scene.ScrollScene(player);//滚动背景
+		}
+		if (player->GetDir() == DIR_RIGHT)
+		{
+			player->updatePostion(DIR_RIGHT, 0, 0, t_scene.getBarrier());
+			t_scene.ScrollScene(player);//滚动背景
+		}
+
+	}
+}
+
+//更新游戏动画
+void CrazyFighting::UpdateAnimation()
+{
+	if (player != NULL)
+	{
+		if (player->IsVisible() == true && player->IsActive() == true)
+		{
+			player->LoopFrame();
+		}
+	}
+}
+
+//加载玩家角色
 void CrazyFighting::LoadPlayer()
 {
-	player = new T_Sprite(L".\\res\\sprite\\blockorange.png", 80, 80);
+	GAMELAYER gameLayer;
 	SPRITEINFO spInfo;
+
+	// 加载玩家角色
+	player = new CrazyMan(L".\\res\\sprite\\blockorange.png", 80, 80);
+
 	spInfo.Active = false;
 	spInfo.Dead = false;
-	spInfo.Dir = DIR_UP;
+	spInfo.Dir = DIR_RIGHT;
 	spInfo.Rotation = TRANS_NONE;
-	spInfo.Ratio = 0.4f;
+	spInfo.Ratio = 0.5f;
 	spInfo.Level = 0;
 	spInfo.Score = 0;
-	spInfo.Speed = 4;
+	spInfo.Speed = 3;
 	spInfo.Alpha = 255;
 	spInfo.Visible = true;
-	spInfo.X = wnd_width / 5;
-	spInfo.Y = (wnd_height - player->GetHeight()) / 2;
+	player->SetSequence(FRAME_UP, 20);
 	player->Initiate(spInfo);
-	player->SetSequence(FRAME_LEFT, 20);
 	player->SetLayerTypeID(LAYER_PLY);
 
-	GAMELAYER gameLayer;
+	int x = 10;
+	int y = wnd_height - 64 - player->GetRatioSize().cy;
+	player->SetPosition(x, y);
+
 	gameLayer.layer = player;
 	gameLayer.type_id = LAYER_PLY;
 	gameLayer.z_order = t_scene.getSceneLayers()->size() + 1;
@@ -65,35 +117,19 @@ CrazyFighting::CrazyFighting(HINSTANCE h_instance, LPCTSTR sz_winclass, LPCTSTR 
 	wnd_height = winheight;
 }
 
-//void CrazyFighting::LoadMap()
-//{
-//
-//}
-//
-//void CrazyFighting::LoadPlayer()
-//{
-//}
-//
+//NPC加载初始化
 //void CrazyFighting::LoadNpc(int total)
 //{
 //}
 //
-//void CrazyFighting::UpdatePlayerPos(int dir)
-//{
-//}
-//
+//NPC更新处理
 //void CrazyFighting::UpdateNpcPos()
 //{
 //}
 //
-//void CrazyFighting::UpdateAnimation()
-//{
-//}
-//
-//void CrazyFighting::LoadMyMenu()
-//{
-//}
 
+
+//游戏初始化
 void CrazyFighting::GameInit()
 {
 	GameState = GAME_START;
@@ -114,6 +150,7 @@ void CrazyFighting::GameInit()
 	backmusic_buffer.Play(true);
 }
 
+//游戏逻辑
 void CrazyFighting::GameLogic()
 {
 	if (GameState == GAME_RUN)
@@ -121,10 +158,13 @@ void CrazyFighting::GameLogic()
 		GameKeyAction();		//处理快速游戏按键
 		if (player->IsActive())	//移动玩家角色
 		{
+			UpdatePlayerPos();//移动玩家角色
+			UpdateAnimation();//更新动画的
 		}
 	}
 }
 
+//游戏结束
 void CrazyFighting::GameEnd()
 {
 	t_scene.RemoveAll();
@@ -134,6 +174,7 @@ void CrazyFighting::GameEnd()
 	menuArea.Destroy();
 }
 
+//游戏绘制
 void CrazyFighting::GamePaint(HDC hdc)
 {
 	if (GameState == GAME_START)		//显示开始菜单
@@ -154,22 +195,59 @@ void CrazyFighting::GamePaint(HDC hdc)
 	}
 }
 
+//游戏键盘操作
 void CrazyFighting::GameKeyAction(int Action)
 {
-	if (GameState == GAME_START)
+	if (Action == KEY_SYS_NONE)//根据keys数组状态处理按键行为
 	{
-	}
-	else if (GameState == GAME_ABOUT)
-	{
-	}
-	else if (GameState == GAME_HELP)
-	{
-	}
-	else if (GameState == GAME_RUN)
-	{
+		if (GameState == GAME_START)
+		{
+		}
+		else if (GameState == GAME_ABOUT)
+		{
+		}
+		else if (GameState == GAME_HELP)
+		{
+		}
+		else if (GameState == GAME_RUN)
+		{
+			if (CheckKey(VK_LEFT))
+			{
+				player->setFalling(false);
+				player->SetDir(DIR_LEFT);
+				player->SetActive(true);
+			}
+
+			if (CheckKey(VK_RIGHT))
+			{
+				player->setFalling(false);
+				player->SetDir(DIR_RIGHT);
+				player->SetActive(true);
+			}
+			if (CheckKey(VK_SPACE))
+			{
+				if (player->getJumping() == false)
+				{
+					player->SetDir(DIR_UP);
+					player->SetActive(true);
+					player->setJumping(true);
+					player->setJumpSpeed(-16);
+				}
+			}
+			if (CheckKey(VK_LEFT) == false && CheckKey(VK_RIGHT) == false && CheckKey(VK_SPACE) == false)
+			{
+				if (player->getJumping() == false)
+				{
+					player->SetActive(false);
+					player->SetFrame(0);
+				}
+
+			}
+		}
 	}
 }
 
+//游戏鼠标操作
 void CrazyFighting::GameMouseAction(int x, int y, int Action)
 {
 	GetCursorPos(&mouse_pt);
@@ -181,21 +259,9 @@ void CrazyFighting::GameMouseAction(int x, int y, int Action)
 		aboutmenu.MenuMouseMove(x, y);
 		helpmenu.MenuMouseMove(x, y);
 		runmenu.MenuMouseMove(x, y);
-		if (GameState == GAME_RUN && opmode == true)
+		if (GameState == GAME_RUN)
 		{
-			int p_dir = player->GetDir(mouse_pt);
-			player->SetDir(p_dir);
-			switch (p_dir)
-			{
-			case DIR_LEFT:
-				player->SetSequence(FRAME_LEFT, 20);
-				break;
-			case DIR_RIGHT:
-				player->SetSequence(FRAME_RIGHT, 20);
-				break;
 
-			}
-			player->SetActive(true);
 		}
 	}
 	if (Action == MOUSE_LCLICK)
@@ -276,13 +342,7 @@ void CrazyFighting::GameMouseAction(int x, int y, int Action)
 				case 1://重新开始
 					MainGameInit();//重新初始化新游戏
 					break;
-				case 2:
-					if (opmode == true)
-						opmode = false;
-					else
-						opmode = true;
-					break;
-				case 3://退出游戏
+				case 2://退出游戏
 					SendMessage(m_hWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
 					break;
 				}
@@ -299,6 +359,7 @@ void CrazyFighting::GameMouseAction(int x, int y, int Action)
 	}
 }
 
+//开始菜单初始化
 void CrazyFighting::StartMenuInit()
 {
 	int x = 0, y = 0;
@@ -358,6 +419,7 @@ void CrazyFighting::StartMenuInit()
 	GameState = GAME_START;
 }
 
+//关于菜单初始化
 void CrazyFighting::AboutMenuInit()
 {
 	int x = 0, y = 0;
@@ -396,6 +458,7 @@ void CrazyFighting::AboutMenuInit()
 	aboutmenu.SetMoveSound(&mousemove_buffer);
 }
 
+//帮助菜单初始化
 void CrazyFighting::HelpMenuInit()
 {
 	int x = 0, y = 0;
@@ -434,13 +497,14 @@ void CrazyFighting::HelpMenuInit()
 	helpmenu.SetMoveSound(&mousemove_buffer);
 }
 
+//游戏运行菜单初始化
 void CrazyFighting::RunMenuInit()
 {
 	menuArea.LoadImageFile(L".\\res\\menu_area.png");   //载入运行菜单区域图片
 	int x = 0, y = 0;
 	int btn_width = 0, btn_height = 0;
 	Color normalClr, focusClr;
-	wstring menuItems[] = { L"返回",L"重新开始",L"切换操作",L"退出" };
+	wstring menuItems[] = { L"返回",L"重新开始",L"退出" };
 	//	runmenu.SetMenuBkg(L".\\res\\bkg03.jpg");//设置背景图片
 		//长条形按钮菜单项
 	btn_width = 175;
@@ -459,7 +523,7 @@ void CrazyFighting::RunMenuInit()
 	menuInfo.normalTextColor = normalClr;//正常状态文字颜色
 	menuInfo.focusTextColor = focusClr;	 //选中状态文字颜色
 	runmenu.SetMenuInfo(menuInfo);
-	for (int i = 0; i < 4; i++) {
+	for (int i = 0; i < 3; i++) {
 		x = wndWidth - btn_width;
 		y = btn_height * i + 12;
 
@@ -473,6 +537,7 @@ void CrazyFighting::RunMenuInit()
 	runmenu.SetMoveSound(&mousemove_buffer);
 }
 
+//开始菜单绘制
 void CrazyFighting::PaintStartMenu(HDC hdc)
 {
 	gamemenu.DrawMenu(hdc);
@@ -497,6 +562,7 @@ void CrazyFighting::PaintStartMenu(HDC hdc)
 
 }
 
+//关于菜单绘制
 void CrazyFighting::PaintAboutMenu(HDC hdc)
 {
 	//绘制关于菜单
@@ -528,6 +594,7 @@ void CrazyFighting::PaintAboutMenu(HDC hdc)
 
 }
 
+//帮助菜单绘制
 void CrazyFighting::PaintHelpMenu(HDC hdc)
 {
 	helpmenu.DrawMenu(hdc);
@@ -555,18 +622,20 @@ void CrazyFighting::PaintHelpMenu(HDC hdc)
 
 }
 
+//运行游戏初始化
 void CrazyFighting::MainGameInit()
 {
-	opmode = false;
 	t_scene.getSceneLayers()->clear();
 	t_scene.RemoveAll();
 	LoadMap();
 	LoadPlayer();
 }
 
+//游戏运行绘制
 void CrazyFighting::PaintMainGame(HDC hdc)
-{
-	t_scene.Draw(hdc, 0, 0);
+{	
+	back.PaintBlank(hdc, 0, 0, wnd_width, wnd_height, Color(3, 127, 237));
+	t_scene.Draw(hdc, 0, 0);	
 	menuArea.PaintImage(hdc, wnd_width - 181, 0, 181, 9, 255);//绘制运行菜单点击区域
 	runmenu.DrawMenu(hdc, 0, 0, 255, GAME_RUN);
 }

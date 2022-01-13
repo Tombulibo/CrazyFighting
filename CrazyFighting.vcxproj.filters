@@ -57,6 +57,9 @@
     <ClCompile Include="MyMenu.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="CrazyMan.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TinyEngine\T_AI.h">
@@ -102,6 +105,12 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MyMenu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CrazyMan.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
