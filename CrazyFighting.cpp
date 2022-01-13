@@ -7,18 +7,20 @@ int CrazyFighting::FRAME_UP[20] = { 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 9, 9, 
 
 //加载地图
 void CrazyFighting::LoadMap()
-{
+{ 
 	//t_scene.LoadTxtMap("map\\mymap.txt");
-	t_scene.LoadTxtMap("map\\jump_map.txt");
+	//t_scene.LoadTxtMap("map\\jump_map.txt");
+	t_scene.LoadTxtMap("map\\01\\background.txt");
+	t_scene.LoadTxtMap("map\\01\\obstacle.txt");
 
 	scn_width = t_scene.getSceneLayers()->back().layer->GetWidth();
 	scn_height = t_scene.getSceneLayers()->back().layer->GetHeight();
 	//视图初始位置以地图作为参照
-	//int scn_x = (wnd_width - scn_width) / 2;
-	//int scn_y = (wnd_width - scn_height) / 2;
-	// 将游戏地图初始化为左上角
 	int scn_x = 0;
-	int scn_y = 0;
+	int scn_y = wnd_height - scn_height;
+	// 将游戏地图初始化为左上角
+	//int scn_x = 0;
+	//int scn_y = 0;
 
 	//将游戏地图初始化为屏幕中央位置
 	t_scene.InitScene(scn_x, scn_y, scn_width, scn_height, wnd_width, wnd_height);
@@ -86,15 +88,15 @@ void CrazyFighting::LoadPlayer()
 	spInfo.Ratio = 0.5f;
 	spInfo.Level = 0;
 	spInfo.Score = 0;
-	spInfo.Speed = 3;
+	spInfo.Speed = 5;
 	spInfo.Alpha = 255;
 	spInfo.Visible = true;
 	player->SetSequence(FRAME_UP, 20);
 	player->Initiate(spInfo);
 	player->SetLayerTypeID(LAYER_PLY);
 
-	int x = 10;
-	int y = wnd_height - 64 - player->GetRatioSize().cy;
+	int x = 0;
+	int y = player->GetRatioSize().cy;
 	player->SetPosition(x, y);
 
 	gameLayer.layer = player;

@@ -131,11 +131,13 @@ void CrazyMan::jumpUpDown(T_Map* pBarrier)
 	jumpSpeed = jumpSpeed + gravity;
 	if (jumpSpeed < 0)   // 往上跳
 	{
+		//SetDir(DIR_UP);
 		// 由于只处理上下方向，所以xDir设为一个不存在的方向，如-1
 		updatePostion(-1, DIR_UP, DIR_UP, pBarrier);
 	}
 	else if (jumpSpeed > 0)  // 往下自由落体
 	{
+		//SetDir(DIR_DOWN);
 		// 由于只处理上下方向，所以xDir设为一个不存在的方向，如-1
 		updatePostion(-1, DIR_DOWN, DIR_DOWN, pBarrier);
 	}
