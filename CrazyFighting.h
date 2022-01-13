@@ -1,17 +1,9 @@
 #pragma once
-#include "TinyEngine/T_Engine.h"
-#include "TinyEngine/T_AI.h"
-#include "TinyEngine/T_Audio.h"
-#include "TinyEngine/T_Config.h"
-#include "TinyEngine/T_Display.h"
-#include "TinyEngine/T_Graph.h"
-#include "TinyEngine/T_Layer.h"
-#include "TinyEngine/T_Map.h"
-#include "TinyEngine/T_Menu.h"
-#include "TinyEngine/T_Music.h"
-#include "TinyEngine/T_Scene.h"
-#include "TinyEngine/T_Sprite.h"
-#include "TinyEngine/T_Util.h"
+#include ".\\TinyEngine\\T_Engine.h"
+#include ".\\TinyEngine\\T_Sprite.h"
+#include ".\\TinyEngine\\T_Scene.h"
+#include ".\\TinyEngine\\T_AI.h"
+#include "MyMenu.h"
 
 //定义vector容器类型的数据类型vSpriteSet
 typedef vector<T_Sprite*> vSpriteSet;
@@ -24,32 +16,37 @@ private:
     static int FRAME_LEFT[20]; //左方向的帧动画
     static int FRAME_RIGHT[20]; //右方向的帧动画
 
+
+
+    //定义要使用的类对象
+    T_Scene t_scene;		//游戏场景
+    T_Sprite* player;		//游戏玩家
+
+
     //定义全局性的变量
     int scn_width, scn_height; //场景宽高
     int wnd_width, wnd_height; //游戏窗口宽高
-    POINT mouse_pt; //当前鼠标位置
-    int op; //操作类型(op=0键盘; op=1鼠标)
+    POINT mouse_pt;				// 当前鼠标位置
+    bool opmode;					//操作方式
 
-    //定义要使用的类对象
-    T_Sprite* player; //游戏玩家
-    vSpriteSet npc_set; //NPC角色集合
-    T_Scene t_scene;
-
+ 
+    //游戏菜单类的对象
+    T_Graph menuArea;				//游戏运行菜单区域
+    T_Menu gamemenu;				//游戏开始菜单类对象
+    T_Menu aboutmenu;				//游戏关于菜单类对象
+    T_Menu helpmenu;				//游戏帮助菜单类对象
+    MyMenu runmenu;					//游戏运行菜单类对象
+    //声音
+    AudioDX ds;
+    AudioDXBuffer backmusic_buffer;
+    AudioDXBuffer robot_buffer;
+    AudioDXBuffer mousedown_buffer;
+    AudioDXBuffer mousemove_buffer;
+    AudioDXBuffer explosionSound;
 
     //定义功能函数
-    void LoadMap(); //加载游戏地图场景
-    void LoadPlayer(); //加载游戏玩家
-    void LoadNpc(int total); //加载游戏NPC
-    void UpdatePlayerPos(int dir); //更新玩家位置
-    void UpdateNpcPos(); //更新NPC位置
-    void UpdateAnimation(); //更新游戏动画
-    void LoadMyMenu();
-
-    //游戏菜单类的对象
-    T_Menu main_menu;
-    T_Menu about_menu;
-    T_Menu help_menu;
-    
+    void LoadMap();					//加载游戏地图场景
+    void LoadPlayer();				//加载玩家角色
 public:
     virtual ~CrazyFighting(void);
     CrazyFighting(HINSTANCE h_instance, LPCTSTR sz_winclass, LPCTSTR sz_title,
@@ -63,5 +60,18 @@ public:
     void GamePaint(HDC hdc);                            // 游戏显示
     void GameKeyAction(int Action = KEY_SYS_NONE);      // 按键行为处理
     void GameMouseAction(int x, int y, int Action);     // 鼠标行为处理
+
+    void StartMenuInit();				//开始菜单初始化
+    void AboutMenuInit();				//关于菜单初始化
+    void HelpMenuInit();				//帮助菜单初始化
+    void RunMenuInit();					//游戏运行菜单初始化
+
+    void PaintStartMenu(HDC hdc);		//绘制开始菜单
+    void PaintAboutMenu(HDC hdc);		//绘制关于菜单
+    void PaintHelpMenu(HDC hdc);		//绘制帮助菜单
+
+    void MainGameInit();				//方块游戏初始化
+    void PaintMainGame(HDC hdc);		//绘制方块游戏
+
 };
 

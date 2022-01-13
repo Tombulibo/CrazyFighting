@@ -54,6 +54,9 @@
     <ClCompile Include="CrazyFighting.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="MyMenu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TinyEngine\T_AI.h">
@@ -96,6 +99,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="CrazyFighting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MyMenu.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
