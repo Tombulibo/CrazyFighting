@@ -11,7 +11,7 @@ protected:
 	int gravity;
 	bool jumping;
 	bool falling;
-
+	bool fallen;
 	int win_width, win_height;
 
 public:
@@ -26,6 +26,9 @@ public:
 
 	void setFalling(bool fall) { falling = fall; }
 	bool getFalling() { return falling; }
+
+	void setFallen(bool fall) { fallen = fall; }
+	bool getFallen() { return fallen; }
 
 	void updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier);
 	void jumpUpDown(T_Map* pBarrier);

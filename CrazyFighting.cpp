@@ -39,24 +39,30 @@ void CrazyFighting::UpdatePlayerPos()
 	if (player->IsDead() == false && player->IsVisible() == true && player->IsActive() == true)
 	{
 		// 处理玩家的跳跃和左右移动	
-		if (player->getJumping())
-		{
-			player->SetSequence(FRAME_UP, 20);
-			player->jumpUpDown(t_scene.getBarrier());
-			t_scene.ScrollScene(player);//滚动背景
-		}
 		if (player->GetDir() == DIR_LEFT)
 		{
+			player->SetRotation(TRANS_HFLIP_NOROT);
 			player->SetSequence(FRAME_RIGHT, 20);
 			player->updatePostion(DIR_LEFT, 0, 0, t_scene.getBarrier());
-			t_scene.ScrollScene(player);//滚动背景
+			//t_scene.ScrollScene(player);//滚动背景
 		}
-		if (player->GetDir() == DIR_RIGHT)
+		else if (player->GetDir() == DIR_RIGHT)
 		{
+			player->SetRotation(TRANS_NONE);
 			player->SetSequence(FRAME_RIGHT, 20);
 			player->updatePostion(DIR_RIGHT, 0, 0, t_scene.getBarrier());
-			t_scene.ScrollScene(player);//滚动背景
+			//t_scene.ScrollScene(player);//滚动背景
 		}
+		t_scene.ScrollScene(player);//滚动背景
+		if (player->getJumping())
+		{
+			//if(!player->getFallen())
+				//player->SetSequence(FRAME_UP, 20);
+
+			player->jumpUpDown(t_scene.getBarrier());
+			//t_scene.ScrollScene(player);//滚动背景
+		}	
+
 	}
 }
 
@@ -83,12 +89,12 @@ void CrazyFighting::LoadPlayer()
 
 	spInfo.Active = false;
 	spInfo.Dead = false;
-	spInfo.Dir = DIR_RIGHT;
+	spInfo.Dir = DIR_DOWN;
 	spInfo.Rotation = TRANS_NONE;
 	spInfo.Ratio = 0.3f;
 	spInfo.Level = 0;
 	spInfo.Score = 0;
-	spInfo.Speed = 3;
+	spInfo.Speed = 6;
 	spInfo.Alpha = 255;
 	spInfo.Visible = true;
 	player->SetSequence(FRAME_RIGHT, 20);
@@ -96,7 +102,7 @@ void CrazyFighting::LoadPlayer()
 	player->SetLayerTypeID(LAYER_PLY);
 
 	int x = 10;
-	int y = wnd_height - 64 - player->GetRatioSize().cy;
+	int y =   wnd_height;
 	player->SetPosition(x, y);
 
 	gameLayer.layer = player;
@@ -143,11 +149,11 @@ void CrazyFighting::GameInit()
 
 	if (!ds.CreateDS(m_hWnd)) return;
 
-	backmusic_buffer.LoadWave(ds, L".\\sound\\backmusic.wav");
-	robot_buffer.LoadWave(ds, L".\\sound\\robot.wav");
-	mousedown_buffer.LoadWave(ds, L".\\sound\\mousedown.wav");
-	mousemove_buffer.LoadWave(ds, L".\\sound\\mouseover.wav");
-	explosionSound.LoadWave(ds, L".\\sound\\blast.wav");
+	backmusic_buffer.LoadWave(ds, L".\\res\\sound\\backmusic.wav");
+	robot_buffer.LoadWave(ds, L".\\res\\sound\\robot.wav");
+	mousedown_buffer.LoadWave(ds, L".\\res\\sound\\mousedown.wav");
+	mousemove_buffer.LoadWave(ds, L".\\res\\sound\\mouseover.wav");
+	explosionSound.LoadWave(ds, L".\\res\\sound\\blast.wav");
 
 	backmusic_buffer.Play(true);
 }
@@ -233,11 +239,16 @@ void CrazyFighting::GameKeyAction(int Action)
 					player->SetDir(DIR_UP);
 					player->SetActive(true);
 					player->setJumping(true);
-					player->setJumpSpeed(-16);
+					player->setJumpSpeed(-20);
+					player->setFallen(false);
 				}
 			}
 			if (CheckKey(VK_LEFT) == false && CheckKey(VK_RIGHT) == false && CheckKey(VK_SPACE) == false)
 			{
+				if (player->getFalling() == false)
+				{
+					player->fallingDown();
+				}
 				if (player->getJumping() == false)
 				{
 					player->SetActive(false);
@@ -631,6 +642,11 @@ void CrazyFighting::MainGameInit()
 	t_scene.RemoveAll();
 	LoadMap();
 	LoadPlayer();
+	player->SetActive(true);
+	player->setJumping(true);
+	//player->setFalling(true);
+	player->setJumpSpeed(-20);
+	player->setFallen(false);
 }
 
 //游戏运行绘制

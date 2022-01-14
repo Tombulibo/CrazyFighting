@@ -6,7 +6,7 @@ CrazyMan::CrazyMan(LPCTSTR imgPath, int frameWidth, int frameHeight, int winWidt
 	win_width = winWidth;
 	win_height = winHeight;
 
-	jumpSpeed = -16;
+	jumpSpeed = -20;
 	gravity = 1;
 	jumping = false;
 	falling = false;
@@ -111,6 +111,7 @@ void CrazyMan::updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier)
 		{
 			jumpSpeed = 0; //设置跳的速度
 			jumping = false; //设置跳的状态
+			fallen = true;//
 		}
 	}
 }
