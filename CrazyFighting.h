@@ -14,10 +14,9 @@ class CrazyFighting :
 {
 private:
     //重新定义动画帧序列
-    static int FRAME_LEFT[20]; //左方向的帧动画
     static int FRAME_RIGHT[20]; //右方向的帧动画
     static int FRAME_UP[20];
-
+    static int FRAME_DOWN[20];
 
     //定义要使用的类对象
     T_Scene t_scene;		//游戏场景
@@ -27,7 +26,7 @@ private:
     //定义全局性的变量
     int scn_width, scn_height; //场景宽高
     int wnd_width, wnd_height; //游戏窗口宽高
-    POINT mouse_pt;				// 当前鼠标位置
+ //   POINT mouse_pt;				// 当前鼠标位置
 
  
     //游戏菜单类的对象

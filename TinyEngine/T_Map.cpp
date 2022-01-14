@@ -156,17 +156,21 @@ void T_Map::Redraw(HDC hdc)
 					int imgTotalCols = tileImageWidth/tile_width;
 					tileIndex = layer_data[r][c];
 					//得到图片上的行列号
-					if(first_gid == 1)
-					{
-						//得到图片上的行列号
-						img_col = (tileIndex - 1) % imgTotalCols;
-						img_row = (tileIndex - 1) / imgTotalCols;
-					}
-					else
-					{
-						img_col = tileIndex % imgTotalCols;
-						img_row = tileIndex / imgTotalCols;
-					}
+
+					img_col = (tileIndex - first_gid) % imgTotalCols;
+					img_row = (tileIndex - first_gid) / imgTotalCols;
+
+					//if(first_gid == 1)
+					//{
+					//	//得到图片上的行列号
+					//	img_col = (tileIndex - 1) % imgTotalCols;
+					//	img_row = (tileIndex - 1) / imgTotalCols;
+					//}
+					//else
+					//{
+					//	img_col = tileIndex % imgTotalCols;
+					//	img_row = tileIndex / imgTotalCols;
+					//}
 
 					BLENDFUNCTION frame_bf;
 					frame_bf.BlendOp = AC_SRC_OVER;

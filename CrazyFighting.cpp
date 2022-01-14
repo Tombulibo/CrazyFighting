@@ -1,15 +1,16 @@
 #include "CrazyFighting.h"
 
 //重新定义帧序列
-int CrazyFighting::FRAME_LEFT[20] = { 0,0,1,1,1,1,2,2,2,2,0,0,1,1,1,1,2,2,2,2 };
-int CrazyFighting::FRAME_RIGHT[20] = { 3,3,4,4,4,4,5,5,5,5,3,3,4,4,4,4,5,5,5,5 };
-int CrazyFighting::FRAME_UP[20] = { 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11 };
+int CrazyFighting::FRAME_RIGHT[20] = { 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,16,17,17};
+int CrazyFighting::FRAME_UP[20] = {36,36,36,37,37,37,38,38,38,39,39,39,40,40,40,41,41,41,41,41};
+int CrazyFighting::FRAME_DOWN[20] = { 18,18,18,19,19,19,20,20,20,21,21,21,22,22,22,23,23,23,23,23 };
 
 //加载地图
 void CrazyFighting::LoadMap()
 {
-	//t_scene.LoadTxtMap("map\\mymap.txt");
-	t_scene.LoadTxtMap("map\\jump_map.txt");
+//	t_scene.LoadTxtMap("map\\jump_map.txt");
+	t_scene.LoadTxtMap("map\\gamelevel2_back.txt");
+	t_scene.LoadTxtMap("map\\gamelevel2_barrier.txt");
 
 	scn_width = t_scene.getSceneLayers()->back().layer->GetWidth();
 	scn_height = t_scene.getSceneLayers()->back().layer->GetHeight();
@@ -46,15 +47,16 @@ void CrazyFighting::UpdatePlayerPos()
 		}
 		if (player->GetDir() == DIR_LEFT)
 		{
+			player->SetSequence(FRAME_RIGHT, 20);
 			player->updatePostion(DIR_LEFT, 0, 0, t_scene.getBarrier());
 			t_scene.ScrollScene(player);//滚动背景
 		}
 		if (player->GetDir() == DIR_RIGHT)
 		{
+			player->SetSequence(FRAME_RIGHT, 20);
 			player->updatePostion(DIR_RIGHT, 0, 0, t_scene.getBarrier());
 			t_scene.ScrollScene(player);//滚动背景
 		}
-
 	}
 }
 
@@ -77,19 +79,19 @@ void CrazyFighting::LoadPlayer()
 	SPRITEINFO spInfo;
 
 	// 加载玩家角色
-	player = new CrazyMan(L".\\res\\sprite\\blockorange.png", 80, 80);
+	player = new CrazyMan(L".\\res\\sprite\\Crazyman2.png", 321, 284);
 
 	spInfo.Active = false;
 	spInfo.Dead = false;
 	spInfo.Dir = DIR_RIGHT;
 	spInfo.Rotation = TRANS_NONE;
-	spInfo.Ratio = 0.5f;
+	spInfo.Ratio = 0.3f;
 	spInfo.Level = 0;
 	spInfo.Score = 0;
 	spInfo.Speed = 3;
 	spInfo.Alpha = 255;
 	spInfo.Visible = true;
-	player->SetSequence(FRAME_UP, 20);
+	player->SetSequence(FRAME_RIGHT, 20);
 	player->Initiate(spInfo);
 	player->SetLayerTypeID(LAYER_PLY);
 
@@ -250,8 +252,8 @@ void CrazyFighting::GameKeyAction(int Action)
 //游戏鼠标操作
 void CrazyFighting::GameMouseAction(int x, int y, int Action)
 {
-	GetCursorPos(&mouse_pt);
-	ScreenToClient(m_hWnd, &mouse_pt);
+	//GetCursorPos(&mouse_pt);
+	//ScreenToClient(m_hWnd, &mouse_pt);
 
 	if (Action == MOUSE_MOVE)//当鼠标选中按钮时，按钮改变状态换图片颜色
 	{
