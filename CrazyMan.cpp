@@ -6,10 +6,11 @@ CrazyMan::CrazyMan(LPCTSTR imgPath, int frameWidth, int frameHeight, int winWidt
 	win_width = winWidth;
 	win_height = winHeight;
 
-	jumpSpeed = -16;
+	jumpSpeed = -20;
 	gravity = 1;
 	jumping = false;
 	falling = false;
+	fallen = true;
 }
 
 CrazyMan::~CrazyMan()
@@ -111,6 +112,7 @@ void CrazyMan::updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier)
 		{
 			jumpSpeed = 0; //设置跳的速度
 			jumping = false; //设置跳的状态
+			fallen = true;
 		}
 	}
 }
@@ -137,7 +139,7 @@ void CrazyMan::jumpUpDown(T_Map* pBarrier)
 	}
 	else if (jumpSpeed > 0)  // 往下自由落体
 	{
-		//SetDir(DIR_DOWN);
+		SetDir(DIR_DOWN);
 		// 由于只处理上下方向，所以xDir设为一个不存在的方向，如-1
 		updatePostion(-1, DIR_DOWN, DIR_DOWN, pBarrier);
 	}

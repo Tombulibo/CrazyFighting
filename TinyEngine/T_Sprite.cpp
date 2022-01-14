@@ -387,9 +387,9 @@ bool T_Sprite::CollideWith(IN T_Map* map)
 	int tH = map->getTileHeight();
 
 	// 计算当前角色的矩形范围
-	int spLeft = this->GetCollideRect()->left;
-	int spTop = this->GetCollideRect()->top;
-	int spRight =this->GetCollideRect()->right;
+	int spLeft = this->GetCollideRect()->left+30;
+	int spTop = this->GetCollideRect()->top+30;
+	int spRight =this->GetCollideRect()->right-30;
 	int spBottom = this->GetCollideRect()->bottom;
 
 	// 获得当前地图中图块的总列数
