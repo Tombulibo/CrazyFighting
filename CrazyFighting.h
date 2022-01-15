@@ -9,6 +9,8 @@
 
 //定义vector容器类型的数据类型vSpriteSet
 typedef vector<T_Sprite*> vSpriteSet;
+//定义vector容器类型的数据类型vCrazyManSet
+typedef vector<CrazyMan*> vCrazyManSet;
 
 class CrazyFighting :
     public T_Engine
@@ -24,9 +26,9 @@ private:
     //定义要使用的类对象
     Horizontal_Scene t_scene;		//游戏场景
     CrazyMan* player;		//游戏玩家
+    vCrazyManSet npc_set;   //NPC角色集合
     int playerType;         //玩家类型，0为女射手，1为狂战士，2为元素使
     int mapType;            //地图类型，0为田园，1为矿洞，2为地狱
-    vSpriteSet npc_set; //NPC角色集合
 
 
     //定义全局性的变量
@@ -63,7 +65,11 @@ private:
     void UpdateNpcPos();                            // 更新NPC位置
     void UpdateAnimation();							// 更新角色动画帧序列号
 
-    static int EXPLOSION_FRAME[8];
+    vSpriteSet arrow_set;	                // 箭容器
+    void Archery(int iTime);				// 加载炮弹
+    void UpdateArrowPos();					// 更新炮弹位置
+    void ArrowCollide(T_Sprite* arrow);		// 检测炮弹是否击中目标
+    void Attack();                          // 检测攻击
 
 public:
     virtual ~CrazyFighting(void);

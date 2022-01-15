@@ -1,11 +1,6 @@
 #pragma once
-#include "TinyEngine\\T_Config.h"
 #include "TinyEngine\\T_Sprite.h"
 #include "TinyEngine\\T_Map.h"
-#include "TinyEngine\\T_Scene.h"
-
-//定义vector容器类型的数据类型vSpriteSet
-typedef vector<T_Sprite*> vSpriteSet;
 
 class CrazyMan : public T_Sprite
 {
@@ -24,7 +19,7 @@ protected:
 	int shootTime;			// 射箭间隔时间
 	bool attacking;			// 是否攻击
 	//int shootTime;			// 射箭间隔时间
-	vSpriteSet arrow_set;	// 箭容器
+	//vSpriteSet arrow_set;	// 箭容器
 
 	int win_width, win_height;
 
@@ -63,22 +58,15 @@ public:
 	void jumpUpDown(T_Map* pBarrier);
 	void fallingDown();
 
-
-	bool CollideWith(IN T_Map* map);			// 重写碰撞检测，适配角色素材
-	bool CollideWith(T_Sprite* target, int distance = 0);
-
 	void setShooting(bool shoot) { shooting = shoot; }
 	bool getShooting() { return shooting; }
 
 	void setShootTime(int stime) { shootTime = stime; }
 	int getShootTime() { return shootTime; }
 
-	// 射击
-	void Archery(int iTime, T_Scene* scene);									// 加载炮弹
-	void UpdateArrowPos(T_Scene* scene, vSpriteSet npc_set);					// 更新炮弹位置
-	void ArrowCollide(T_Sprite* arrow, T_Scene* scene, vSpriteSet npc_set);		// 检测炮弹是否击中目标
-
 	void setAttacking(bool attack) { attacking = attack; }
 	bool getAttacking() { return attacking; }
-	void Attack(T_Scene* scene, vSpriteSet npc_set);
+
+	bool CollideWith(IN T_Map* map);			// 重写碰撞检测，适配角色素材
+	bool CollideWith(T_Sprite* target, int distance = 0);
 };
