@@ -1,9 +1,11 @@
 #include "CrazyFighting.h"
 
 //重新定义帧序列
-int CrazyFighting::FRAME_LEFT[20] = { 0,0,1,1,1,1,2,2,2,2,0,0,1,1,1,1,2,2,2,2 };
-int CrazyFighting::FRAME_RIGHT[20] = { 3,3,4,4,4,4,5,5,5,5,3,3,4,4,4,4,5,5,5,5 };
-int CrazyFighting::FRAME_UP[20] = { 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11 };
+int CrazyFighting::FRAME_LEFT[20] = { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 };
+int CrazyFighting::FRAME_RIGHT[20] = { 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5 };
+int CrazyFighting::FRAME_UP[20] = { 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8 };
+int CrazyFighting::FRAME_DOWN[20] = { 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11 };
+int CrazyFighting::EXPLOSION_FRAME[8] = { 0, 1, 2, 3, 4, 5, 6, 7 };
 
 //加载地图
 void CrazyFighting::LoadMap()
@@ -39,37 +41,85 @@ void CrazyFighting::UpdatePlayerPos()
 	if (player == NULL) return;
 	if (player->IsDead() == false && player->IsVisible() == true && player->IsActive() == true)
 	{
-		// 处理玩家的跳跃和左右移动	
-		if (player->getJumping())
-		{
-			player->SetSequence(FRAME_UP, 20);
-			player->jumpUpDown(t_scene.getBarrier());
-			t_scene.ScrollScene(player);//滚动背景
-		}
+		// 处理玩家的跳跃和左右移动
 		if (player->GetDir() == DIR_LEFT)
 		{
+			player->SetRotation(TRANS_HFLIP_NOROT);
+			player->SetSequence(player->FRAME_WALK, 20);
 			player->updatePostion(DIR_LEFT, 0, 0, t_scene.getBarrier());
-			t_scene.ScrollScene(player);//滚动背景
+			//t_scene.ScrollScene(player);//滚动背景
 		}
-		if (player->GetDir() == DIR_RIGHT)
+		else if (player->GetDir() == DIR_RIGHT)
 		{
+			player->SetRotation(TRANS_NONE);
+			player->SetSequence(player->FRAME_WALK, 20);
 			player->updatePostion(DIR_RIGHT, 0, 0, t_scene.getBarrier());
-			t_scene.ScrollScene(player);//滚动背景
+			//t_scene.ScrollScene(player);//滚动背景
 		}
-
+		t_scene.ScrollScene(player);//滚动背景
+		if (player->getJumping())
+		{
+			if (player->getJumpSpeed() < -2)
+			{
+				player->SetSequence(player->FRAME_JUMP, 20);
+			}
+			if (player->getJumpSpeed() > 2)
+			{
+				player->SetSequence(player->FRAME_FALL, 20);
+			}
+			//player->SetSequence(FRAME_UP, 20);
+			player->jumpUpDown(t_scene.getBarrier());
+			//t_scene.ScrollScene(player);//滚动背景
+		}
+		if (player->getShooting())
+		{
+			player->SetSequence(player->FRAME_SHOOT, 40);
+			//player->LoadArrow(400, &t_scene);
+		}
 	}
 }
 
 //更新游戏动画
 void CrazyFighting::UpdateAnimation()
 {
-	if (player != NULL)
-	{
-		if (player->IsVisible() == true && player->IsActive() == true)
-		{
-			player->LoopFrame();
+	vSpriteSet::iterator it;
+	if (npc_set.size() > 0) {
+		for (it = npc_set.begin(); it != npc_set.end(); it++) {
+			(*it)->LoopFrame();
 		}
 	}
+
+	if (player != NULL) {
+		if (player->IsVisible() == true && player->IsActive() == true) player->LoopFrame();
+	}
+	/*
+	if (explosion_set.size() > 0)
+	{
+		vSpriteSet::iterator e = explosion_set.begin();
+		for (; e != explosion_set.end();)
+		{
+			if ((*e)->LoopFrameOnce() == true)
+			{
+				// 删除场景中已经失效的爆炸对象	
+				SCENE_LAYERS::iterator lp;
+				for (lp = t_scene.getSceneLayers()->begin(); lp != t_scene.getSceneLayers()->end(); lp++)
+				{
+					if ((*lp).layer == (*e))
+					{
+						lp = t_scene.getSceneLayers()->erase(lp);
+						break;
+					}
+				}
+				delete (*e);
+				e = explosion_set.erase(e);
+				continue;
+			}
+			else
+			{
+				++e;
+			}
+		}
+	}*/
 }
 
 //加载玩家角色
@@ -79,19 +129,19 @@ void CrazyFighting::LoadPlayer()
 	SPRITEINFO spInfo;
 
 	// 加载玩家角色
-	player = new CrazyMan(L".\\res\\sprite\\blockorange.png", 80, 80);
+	player = new Shooter(L".\\res\\sprite\\Shooter\\Crazyman_lina.png", 321, 284);
 
 	spInfo.Active = false;
 	spInfo.Dead = false;
 	spInfo.Dir = DIR_RIGHT;
 	spInfo.Rotation = TRANS_NONE;
-	spInfo.Ratio = 0.5f;
+	spInfo.Ratio = 0.3f;
 	spInfo.Level = 0;
 	spInfo.Score = 0;
-	spInfo.Speed = 5;
+	spInfo.Speed = 4;
 	spInfo.Alpha = 255;
 	spInfo.Visible = true;
-	player->SetSequence(FRAME_UP, 20);
+	player->SetSequence(player->FRAME_JUMP, 20);
 	player->Initiate(spInfo);
 	player->SetLayerTypeID(LAYER_PLY);
 
@@ -129,7 +179,120 @@ CrazyFighting::CrazyFighting(HINSTANCE h_instance, LPCTSTR sz_winclass, LPCTSTR 
 //{
 //}
 //
+void CrazyFighting::LoadNpc(int total)
+{
+	SPRITEINFO spInfo;
+	for (int i = 0; i < total; i++)
+	{
+		spInfo.Active = true;
+		spInfo.Dead = false;
+		spInfo.Rotation = TRANS_NONE;
+		spInfo.Ratio = 0.5f;
+		spInfo.Speed = 2;
+		spInfo.Alpha = 255;
+		spInfo.Visible = true;
+		spInfo.Level = 0;
+		spInfo.Score = 0;
+		int sp_width = 40;
+		int sp_height = 40;
+		//抽取随即方向（NPC角色在地图的四角生成）
+		int sdr = rand() % 4;
+		int d = rand() % 2;
+		switch (sdr)
+		{
+		case 0: //左上角
+			if (d == 0) spInfo.Dir = DIR_RIGHT;
+			if (d == 1) spInfo.Dir = DIR_DOWN;
+			spInfo.X = 0;
+			spInfo.Y = 0;
+			break;
+		case 1://右上角
+			if (d == 0) spInfo.Dir = DIR_LEFT;
+			if (d == 1) spInfo.Dir = DIR_DOWN;
+			spInfo.X = wnd_width - sp_width;
+			spInfo.Y = 0;
+			break;
+		case 2://左下角
+			if (d == 0) spInfo.Dir = DIR_RIGHT;
+			if (d == 1) spInfo.Dir = DIR_UP;
+			spInfo.X = 0;
+			spInfo.Y = wnd_height - sp_height;
+			break;
+		case 3://右下角
+			if (d == 0) spInfo.Dir = DIR_LEFT;
+			if (d == 1) spInfo.Dir = DIR_UP;
+			spInfo.X = wnd_width - sp_width;
+			spInfo.Y = wnd_height - 2 * sp_height;
+			break;
+		}
+		//在NPC列表中增加新的项目
+		npc_set.push_back(new T_Sprite(L".\\res\\blockgreen.png", 80, 80));
+		//初始化刚增加的项目
+		T_Sprite* sp = npc_set.back();
+		sp->Initiate(spInfo);
+		switch (spInfo.Dir)
+		{
+		case DIR_LEFT:
+			sp->SetSequence(FRAME_LEFT, 20);
+			break;
+		case DIR_RIGHT:
+			sp->SetSequence(FRAME_RIGHT, 20);
+			break;
+		case DIR_UP:
+			sp->SetSequence(FRAME_UP, 20);
+			break;
+		case DIR_DOWN:
+			sp->SetSequence(FRAME_DOWN, 20);
+			break;
+		}
+		sp->SetLayerTypeID(LAYER_NPC);
 
+		GAMELAYER gamelayer;
+		gamelayer.layer = sp;
+		gamelayer.type_id = LAYER_NPC;
+		gamelayer.z_order = t_scene.getSceneLayers()->size() + 1;
+		gamelayer.layer->setZorder(gamelayer.z_order);
+		t_scene.Append(gamelayer);
+
+		sp = NULL;
+	}
+}
+void CrazyFighting::UpdateNpcPos()
+{
+	if (npc_set.size() == 0) return;
+	//构造T_AI对象
+	T_AI* spAi = new T_AI(4);
+	//遍历全部NPC
+	vSpriteSet::iterator p;
+	for (p = npc_set.begin(); p != npc_set.end(); p++)
+	{
+		if ((*p)->IsActive() == true && (*p)->IsVisible() == true)
+		{
+			spAi->Evade((*p), player); //躲避玩家角色
+			spAi->CheckOverlay((*p), npc_set); //防止互相重叠
+			int npc_dir = (*p)->GetDir(); //获取当前方向
+			//根据当前方向及时更新对应的帧动画序列
+			switch (npc_dir)
+			{
+			case DIR_LEFT:
+				(*p)->SetSequence(FRAME_LEFT, 20);
+				break;
+			case DIR_RIGHT:
+				(*p)->SetSequence(FRAME_RIGHT, 20);
+				break;
+			case DIR_UP:
+				(*p)->SetSequence(FRAME_UP, 20);
+				break;
+			case DIR_DOWN:
+				(*p)->SetSequence(FRAME_DOWN, 20);
+				break;
+			}
+			//NPC在地图上漫游,并自动检测地图障碍
+			spAi->Wander((*p), t_scene.getBarrier());
+		}
+	}
+	delete spAi;
+}
 
 //游戏初始化
 void CrazyFighting::GameInit()
@@ -161,8 +324,10 @@ void CrazyFighting::GameLogic()
 		if (player->IsActive())	//移动玩家角色
 		{
 			UpdatePlayerPos();//移动玩家角色
-			UpdateAnimation();//更新动画的
 		}
+		UpdateNpcPos();
+		player->UpdateArrowPos(&t_scene, npc_set);
+		UpdateAnimation();//更新动画的
 	}
 }
 
@@ -217,30 +382,74 @@ void CrazyFighting::GameKeyAction(int Action)
 			{
 				player->setFalling(false);
 				player->SetDir(DIR_LEFT);
+				player->setFaceTo(DIR_LEFT);
 				player->SetActive(true);
 			}
 
-			if (CheckKey(VK_RIGHT))
+			else if (CheckKey(VK_RIGHT))
 			{
 				player->setFalling(false);
 				player->SetDir(DIR_RIGHT);
+				player->setFaceTo(DIR_RIGHT);
 				player->SetActive(true);
 			}
-			if (CheckKey(VK_SPACE))
+			if (CheckKey(VK_UP))
 			{
 				if (player->getJumping() == false)
 				{
 					player->SetDir(DIR_UP);
 					player->SetActive(true);
 					player->setJumping(true);
-					player->setJumpSpeed(-16);
+					player->setJumpSpeed(-20);
+					player->setFallen(false);
 				}
 			}
-			if (CheckKey(VK_LEFT) == false && CheckKey(VK_RIGHT) == false && CheckKey(VK_SPACE) == false)
+			if (CheckKey(VK_SHIFT) && (CheckKey(VK_LEFT) || CheckKey(VK_RIGHT)))
 			{
+				if (player->GetSpeed() < 10)
+				{
+					player->SetSpeed(player->GetSpeed() + 1);
+				}
+			}
+			else
+			{
+				if (player->GetSpeed() > 4)
+				{
+					player->SetSpeed(player->GetSpeed() - 1);
+				}
+			}
+			if (CheckKey(VK_DOWN))
+			{
+				player->SetSequence(player->FRAME_SLIDE, 20);
+				player->SetActive(true);
+			}
+			if (CheckKey(VK_SPACE))
+			{
+				//player->SetSequence(player->FRAME_SHOOT, 40);
+				
+				if (player->IsDead() == false && player->IsVisible() == true)
+				{
+					player->setShooting(true);
+					//if (ChargeCount > 0)
+					//{
+					//LoadBomb(player, player_bomb_set, 400);
+					player->LoadArrow(player->getShootTime(), &t_scene);
+					//ChargeCount = ChargeCount - 1;
+				//}
+				}
+				player->SetActive(true);
+			}
+			else player->setShooting(false);
+			if (CheckKey(VK_LEFT) == false && CheckKey(VK_RIGHT) == false && CheckKey(VK_UP) == false && CheckKey(VK_DOWN) == false && CheckKey(VK_SPACE) == false)
+			{
+				if (player->getFalling() == false)
+				{
+					player->fallingDown();
+				}
 				if (player->getJumping() == false)
 				{
 					player->SetActive(false);
+					player->SetSequence(player->FRAME_JUMP, 20);
 					player->SetFrame(0);
 				}
 
@@ -631,6 +840,7 @@ void CrazyFighting::MainGameInit()
 	t_scene.RemoveAll();
 	LoadMap();
 	LoadPlayer();
+	LoadNpc(NPC_NUM);
 }
 
 //游戏运行绘制

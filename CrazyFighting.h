@@ -5,6 +5,7 @@
 #include ".\\TinyEngine\\T_AI.h"
 #include "MyMenu.h"
 #include "CrazyMan.h"
+#include "Shooter.h"
 
 //定义vector容器类型的数据类型vSpriteSet
 typedef vector<T_Sprite*> vSpriteSet;
@@ -17,11 +18,13 @@ private:
     static int FRAME_LEFT[20]; //左方向的帧动画
     static int FRAME_RIGHT[20]; //右方向的帧动画
     static int FRAME_UP[20];
-
+    static int FRAME_DOWN[20];
+    static const int NPC_NUM = 10; //NPC总数
 
     //定义要使用的类对象
     T_Scene t_scene;		//游戏场景
-    CrazyMan* player;		//游戏玩家
+    Shooter* player;		//游戏玩家
+    vSpriteSet npc_set; //NPC角色集合
 
 
     //定义全局性的变量
@@ -49,9 +52,26 @@ private:
     //定义功能函数
     void LoadPlayer();								// 加载游戏玩家角色
     void LoadMap();									// 加载游戏地图场景	
+    void LoadNpc(int total);                        // 加载游戏NPC
 
     void UpdatePlayerPos();							// 更新玩家角色的位置
+    void UpdateNpcPos();                            // 更新NPC位置
     void UpdateAnimation();							// 更新角色动画帧序列号
+
+    static int EXPLOSION_FRAME[8];
+
+    vSpriteSet explosion_set;
+    vSpriteSet player_bomb_set;
+
+    void LoadExplosion(int x, int y);
+
+    void LoadBomb(									// 发射炮弹处理
+        T_Sprite* sp,								// 发射炮弹的角色
+        vSpriteSet& bombSet,						// 炮弹集合
+        int iTime = 0);
+
+    void UpdateBombPos(vSpriteSet* bombSet);
+    void BombCollide(T_Sprite* bomb);
 public:
     virtual ~CrazyFighting(void);
     CrazyFighting(HINSTANCE h_instance, LPCTSTR sz_winclass, LPCTSTR sz_title,
