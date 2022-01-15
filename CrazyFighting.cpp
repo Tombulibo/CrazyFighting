@@ -54,6 +54,11 @@ void CrazyFighting::UpdatePlayerPos()
 			//t_scene.ScrollScene(player);//滚动背景
 		}
 		t_scene.ScrollScene(player);//滚动背景
+	/*	if (player->GetDir() == DIR_DOWN && gamestart == 1) 
+		{
+			t_scene.MoveScene(0, -500);
+			gamestart = 0;
+		}*/
 		if (player->getJumping())
 		{
 			//if(!player->getFallen())
@@ -146,7 +151,6 @@ void CrazyFighting::GameInit()
 	AboutMenuInit();
 	HelpMenuInit();
 	MainGameInit();
-
 	if (!ds.CreateDS(m_hWnd)) return;
 
 	backmusic_buffer.LoadWave(ds, L".\\res\\sound\\backmusic.wav");
@@ -642,11 +646,14 @@ void CrazyFighting::MainGameInit()
 	t_scene.RemoveAll();
 	LoadMap();
 	LoadPlayer();
+
 	player->SetActive(true);
 	player->setJumping(true);
 	//player->setFalling(true);
 	player->setJumpSpeed(-20);
 	player->setFallen(false);
+	//gamestart = 1;
+
 }
 
 //游戏运行绘制

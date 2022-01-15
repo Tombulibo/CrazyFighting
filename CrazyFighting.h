@@ -1,7 +1,7 @@
 #pragma once
 #include ".\\TinyEngine\\T_Engine.h"
 #include ".\\TinyEngine\\T_Sprite.h"
-#include ".\\TinyEngine\\T_Scene.h"
+#include "Horizontal_Scene.h"
 #include ".\\TinyEngine\\T_AI.h"
 #include "MyMenu.h"
 #include "CrazyMan.h"
@@ -19,16 +19,19 @@ private:
     static int FRAME_DOWN[20];
 
     //定义要使用的类对象
-    T_Scene t_scene;		//游戏场景
+    Horizontal_Scene t_scene;		//游戏场景
     CrazyMan* player;		//游戏玩家
 
 
     //定义全局性的变量
     int scn_width, scn_height; //场景宽高
     int wnd_width, wnd_height; //游戏窗口宽高
- //   POINT mouse_pt;				// 当前鼠标位置
+    //   POINT mouse_pt;				// 当前鼠标位置
 
  
+    //int gamestart;
+
+
     //游戏菜单类的对象
     T_Graph back;
     T_Graph menuArea;				//游戏运行菜单区域
