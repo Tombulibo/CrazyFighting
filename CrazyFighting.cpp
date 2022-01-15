@@ -45,14 +45,14 @@ void CrazyFighting::UpdatePlayerPos()
 		if (player->GetDir() == DIR_LEFT)
 		{
 			player->SetRotation(TRANS_HFLIP_NOROT);
-			player->SetSequence(player->FRAME_WALK, 20);
+			player->SetSequence(player->SHOOTER_WALK, 20);
 			player->updatePostion(DIR_LEFT, 0, 0, t_scene.getBarrier());
 			//t_scene.ScrollScene(player);//¹ö¶¯±³¾°
 		}
 		else if (player->GetDir() == DIR_RIGHT)
 		{
 			player->SetRotation(TRANS_NONE);
-			player->SetSequence(player->FRAME_WALK, 20);
+			player->SetSequence(player->SHOOTER_WALK, 20);
 			player->updatePostion(DIR_RIGHT, 0, 0, t_scene.getBarrier());
 			//t_scene.ScrollScene(player);//¹ö¶¯±³¾°
 		}
@@ -61,11 +61,11 @@ void CrazyFighting::UpdatePlayerPos()
 		{
 			if (player->getJumpSpeed() < -2)
 			{
-				player->SetSequence(player->FRAME_JUMP, 20);
+				player->SetSequence(player->SHOOTER_JUMP, 20);
 			}
 			if (player->getJumpSpeed() > 2)
 			{
-				player->SetSequence(player->FRAME_FALL, 20);
+				player->SetSequence(player->SHOOTER_FALL, 20);
 			}
 			//player->SetSequence(FRAME_UP, 20);
 			player->jumpUpDown(t_scene.getBarrier());
@@ -73,7 +73,7 @@ void CrazyFighting::UpdatePlayerPos()
 		}
 		if (player->getShooting())
 		{
-			player->SetSequence(player->FRAME_SHOOT, 40);
+			player->SetSequence(player->SHOOTER_SHOOT, 40);
 			//player->LoadArrow(400, &t_scene);
 		}
 	}
@@ -129,7 +129,7 @@ void CrazyFighting::LoadPlayer()
 	SPRITEINFO spInfo;
 
 	// ¼ÓÔØÍæ¼Ò½ÇÉ«
-	player = new Shooter(L".\\res\\sprite\\Shooter\\Crazyman_lina.png", 321, 284);
+	player = new CrazyMan(L".\\res\\sprite\\Shooter\\Crazyman_lina.png", 321, 284);
 
 	spInfo.Active = false;
 	spInfo.Dead = false;
@@ -141,7 +141,7 @@ void CrazyFighting::LoadPlayer()
 	spInfo.Speed = 4;
 	spInfo.Alpha = 255;
 	spInfo.Visible = true;
-	player->SetSequence(player->FRAME_JUMP, 20);
+	player->SetSequence(player->SHOOTER_JUMP, 20);
 	player->Initiate(spInfo);
 	player->SetLayerTypeID(LAYER_PLY);
 
@@ -420,7 +420,7 @@ void CrazyFighting::GameKeyAction(int Action)
 			}
 			if (CheckKey(VK_DOWN))
 			{
-				player->SetSequence(player->FRAME_SLIDE, 20);
+				player->SetSequence(player->SHOOTER_SLIDE, 20);
 				player->SetActive(true);
 			}
 			if (CheckKey(VK_SPACE))
@@ -449,7 +449,7 @@ void CrazyFighting::GameKeyAction(int Action)
 				if (player->getJumping() == false)
 				{
 					player->SetActive(false);
-					player->SetSequence(player->FRAME_JUMP, 20);
+					player->SetSequence(player->SHOOTER_JUMP, 20);
 					player->SetFrame(0);
 				}
 

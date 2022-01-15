@@ -5,7 +5,6 @@
 #include ".\\TinyEngine\\T_AI.h"
 #include "MyMenu.h"
 #include "CrazyMan.h"
-#include "Shooter.h"
 
 //定义vector容器类型的数据类型vSpriteSet
 typedef vector<T_Sprite*> vSpriteSet;
@@ -23,7 +22,7 @@ private:
 
     //定义要使用的类对象
     T_Scene t_scene;		//游戏场景
-    Shooter* player;		//游戏玩家
+    CrazyMan* player;		//游戏玩家
     vSpriteSet npc_set; //NPC角色集合
 
 
@@ -60,18 +59,6 @@ private:
 
     static int EXPLOSION_FRAME[8];
 
-    vSpriteSet explosion_set;
-    vSpriteSet player_bomb_set;
-
-    void LoadExplosion(int x, int y);
-
-    void LoadBomb(									// 发射炮弹处理
-        T_Sprite* sp,								// 发射炮弹的角色
-        vSpriteSet& bombSet,						// 炮弹集合
-        int iTime = 0);
-
-    void UpdateBombPos(vSpriteSet* bombSet);
-    void BombCollide(T_Sprite* bomb);
 public:
     virtual ~CrazyFighting(void);
     CrazyFighting(HINSTANCE h_instance, LPCTSTR sz_winclass, LPCTSTR sz_title,
