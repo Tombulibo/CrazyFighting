@@ -109,34 +109,6 @@ void CrazyFighting::UpdateAnimation()
 	if (player != NULL) {
 		if (player->IsVisible() == true && player->IsActive() == true) player->LoopFrame();
 	}
-	/*
-	if (explosion_set.size() > 0)
-	{
-		vSpriteSet::iterator e = explosion_set.begin();
-		for (; e != explosion_set.end();)
-		{
-			if ((*e)->LoopFrameOnce() == true)
-			{
-				// 删除场景中已经失效的爆炸对象	
-				SCENE_LAYERS::iterator lp;
-				for (lp = t_scene.getSceneLayers()->begin(); lp != t_scene.getSceneLayers()->end(); lp++)
-				{
-					if ((*lp).layer == (*e))
-					{
-						lp = t_scene.getSceneLayers()->erase(lp);
-						break;
-					}
-				}
-				delete (*e);
-				e = explosion_set.erase(e);
-				continue;
-			}
-			else
-			{
-				++e;
-			}
-		}
-	}*/
 }
 
 //加载玩家角色
@@ -367,7 +339,7 @@ void CrazyFighting::UpdateArrowPos() {
 
 			//检测炮弹是否击中目标
 			ArrowCollide((*itp));
-			//if (GameState != GAME_RUN) return;
+			if (GameState != GAME_RUN) return;
 		}
 
 		if ((*itp)->IsVisible() == false ||
