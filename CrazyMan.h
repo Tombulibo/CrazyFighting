@@ -30,7 +30,15 @@ public:
 	void setFallen(bool fall) { fallen = fall; }
 	bool getFallen() { return fallen; }
 
+
+	// ¼ì²â½ÇÉ«Åö×², distance¼ì²âÅö×²µÄ¾àÀë
+	bool CollideWith(T_Sprite* target, int distance = 0);
+	// ¼ì²âµØÍ¼Åö×²
+	bool CollideWith(IN T_Map* map);
+
 	void updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier);
 	void jumpUpDown(T_Map* pBarrier);
 	void fallingDown();
+
+	
 };

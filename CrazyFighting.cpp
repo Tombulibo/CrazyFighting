@@ -11,6 +11,7 @@ void CrazyFighting::LoadMap()
 //	t_scene.LoadTxtMap("map\\jump_map.txt");
 	t_scene.LoadTxtMap("map\\gamelevel2_back.txt");
 	t_scene.LoadTxtMap("map\\gamelevel2_barrier.txt");
+	t_scene.LoadTxtMap("map\\gamelevel2_mask.txt");
 
 	scn_width = t_scene.getSceneLayers()->back().layer->GetWidth();
 	scn_height = t_scene.getSceneLayers()->back().layer->GetHeight();
@@ -90,7 +91,7 @@ void CrazyFighting::LoadPlayer()
 	SPRITEINFO spInfo;
 
 	// ╪стьмФ╪р╫ги╚
-	player = new CrazyMan(L".\\res\\sprite\\Crazyman2.png", 321, 284);
+	player = new CrazyMan(L".\\res\\sprite\\Crazyman1.png", 321, 284);
 
 	spInfo.Active = false;
 	spInfo.Dead = false;
