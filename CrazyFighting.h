@@ -5,6 +5,7 @@
 #include ".\\TinyEngine\\T_AI.h"
 #include "MyMenu.h"
 #include "CrazyMan.h"
+#include "Horizontal_Scene.h"
 
 //定义vector容器类型的数据类型vSpriteSet
 typedef vector<T_Sprite*> vSpriteSet;
@@ -21,8 +22,10 @@ private:
     static const int NPC_NUM = 10; //NPC总数
 
     //定义要使用的类对象
-    T_Scene t_scene;		//游戏场景
+    Horizontal_Scene t_scene;		//游戏场景
     CrazyMan* player;		//游戏玩家
+    int playerType;         //玩家类型，0为女射手，1为狂战士，2为元素使
+    int mapType;            //地图类型，0为田园，1为矿洞，2为地狱
     vSpriteSet npc_set; //NPC角色集合
 
 
@@ -35,10 +38,13 @@ private:
     //游戏菜单类的对象
     T_Graph back;
     T_Graph menuArea;				//游戏运行菜单区域
-    T_Menu gamemenu;				//游戏开始菜单类对象
+    T_Menu startmenu;				//游戏开始菜单类对象
     T_Menu aboutmenu;				//游戏关于菜单类对象
     T_Menu helpmenu;				//游戏帮助菜单类对象
     MyMenu runmenu;					//游戏运行菜单类对象
+    T_Menu playermenu;              //游戏选人菜单
+    T_Menu mapmenu;                 //游戏选地图菜单
+    int chooseState;                //游戏选择状态
 
     //声音
     AudioDX ds;
@@ -77,13 +83,16 @@ public:
     void AboutMenuInit();				//关于菜单初始化
     void HelpMenuInit();				//帮助菜单初始化
     void RunMenuInit();					//游戏运行菜单初始化
+    void PlayerMenuInit();              //游戏选人菜单初始化
+    void MapMenuInit();                 //游戏选地图菜单初始化
 
     void PaintStartMenu(HDC hdc);		//绘制开始菜单
     void PaintAboutMenu(HDC hdc);		//绘制关于菜单
     void PaintHelpMenu(HDC hdc);		//绘制帮助菜单
+    void PaintPlayerMenu(HDC hdc);      //绘制游戏选人菜单
+    void PaintMapMenu(HDC hdc);         //绘制游戏选地图菜单
 
     void MainGameInit();				//方块游戏初始化
     void PaintMainGame(HDC hdc);		//绘制方块游戏
-
 };
 
