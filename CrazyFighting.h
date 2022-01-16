@@ -22,6 +22,7 @@ private:
     static int FRAME_UP[20];
     static int FRAME_DOWN[20];
     static const int NPC_NUM = 10; //NPC总数
+    static const int SUPER_TIME = 5000;
 
     //定义要使用的类对象
     Horizontal_Scene t_scene;		//游戏场景
@@ -48,13 +49,46 @@ private:
     T_Menu mapmenu;                 //游戏选地图菜单
     int chooseState;                //游戏选择状态
 
+    //………………………………………………………………………………………………………
+    // 与游戏逻辑控制相关的变量
+    //………………………………………………………………………………………………………
+    long BonusLoadStartTime;						// 奖励加载计时
+    long BubbleLoadStartTime;						// Bubble加载计时
+
+    int GameLevel;									// 游戏关数计数器
+    int LifeCount = 3;									// 玩家生命计数器
+    int ScoreCount = 0;									// 玩家得分累计
+    //int LevelScore;									// 每关得分
+    //int growScore;									// 玩家长大得分
+
+    bool isDelayCollision;							// 是否延时碰撞
+    bool looseBlood;								// 是否失血状态
+    //bool upgradeGameLevel;							// 是否已经升级
+    bool updateLifeCount;							// 是否更新玩家生命数
+
+    //bool growUp;									// 是否成长
+    //bool addLifeCount;								// 是否可以增加生命值
+    //………………………………………………………………………………………………………
+    // 与图片资源相关的变量
+    //………………………………………………………………………………………………………
+    T_Graph* lifeImg;								// 状态栏玩家生命数小图片
+    T_Graph* levelImg;								// 游戏关计数小图片
+    T_Graph* totalscoreBmp;							// 状态栏玩家总分数小图片
+    T_Graph* scoreImg;								// 状态栏玩家得分小图片
+
     //声音
     AudioDX ds;
-    AudioDXBuffer backmusic_buffer;
-    AudioDXBuffer robot_buffer;
+    AudioDXBuffer openmusic_buffer;
+    AudioDXBuffer startmusic_buffer;
+    AudioDXBuffer mapmusic01_buffer;
+    AudioDXBuffer mapmusic02_buffer;
+    AudioDXBuffer mapmusic03_buffer;
+    //AudioDXBuffer robot_buffer;
     AudioDXBuffer mousedown_buffer;
     AudioDXBuffer mousemove_buffer;
-    AudioDXBuffer explosionSound;
+    //AudioDXBuffer explosionSound;
+    AudioDXBuffer gameovermusic_buffer;
+    AudioDXBuffer victorymusic_buffer;
 
     //定义功能函数
     void LoadPlayer();								// 加载游戏玩家角色
@@ -62,14 +96,19 @@ private:
     void LoadNpc(int total);                        // 加载游戏NPC
 
     void UpdatePlayerPos();							// 更新玩家角色的位置
+    void updatePlayerlife();
     void UpdateNpcPos();                            // 更新NPC位置
     void UpdateAnimation();							// 更新角色动画帧序列号
 
     vSpriteSet arrow_set;	                // 箭容器
-    void Archery(int iTime);				// 加载炮弹
+    void LoadArrow(int iTime);				// 加载炮弹
     void UpdateArrowPos();					// 更新炮弹位置
     void ArrowCollide(T_Sprite* arrow);		// 检测炮弹是否击中目标
-    void Attack();                          // 检测攻击
+    void AttackCollide();                   // 检测攻击
+
+    void LoadImageRes();
+    void DisplayInfo(HDC hdc, int game_state);
+    void ClearGameLevel();
 
 public:
     virtual ~CrazyFighting(void);
