@@ -793,16 +793,11 @@ void CrazyFighting::GameKeyAction(int Action)
 					player->SetSpeed(player->GetSpeed() - 1);
 				}
 			}
-			if (CheckKey(VK_DOWN))
-			{
-				player->SetSequence(player->FRAME_ATTACK, 20);
-				player->SetActive(true);
-			}
 			if (CheckKey(67))
 			{
 				//player->SetSequence(player->FRAME_SHOOT, 40);
 				
-				if (player->IsDead() == false && player->IsVisible() == true)
+				if (player->IsDead() == false && player->IsVisible() == true && player->getType() != 1)
 				{
 					player->setShooting(true);
 					//if (ChargeCount > 0)
@@ -829,7 +824,7 @@ void CrazyFighting::GameKeyAction(int Action)
 			}
 			else player->setAttacking(false);
 			
-			if (CheckKey(VK_LEFT) == false && CheckKey(VK_RIGHT) == false && CheckKey(VK_UP) == false && CheckKey(VK_DOWN) == false && CheckKey(67) == false && CheckKey(VK_SPACE) == false)
+			if (CheckKey(VK_LEFT) == false && CheckKey(VK_RIGHT) == false && CheckKey(VK_UP) == false && CheckKey(67) == false && CheckKey(VK_SPACE) == false)
 			{
 				if (player->getFalling() == false)
 				{
