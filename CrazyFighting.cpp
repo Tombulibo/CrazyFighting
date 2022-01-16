@@ -235,10 +235,18 @@ void CrazyFighting::LoadNpc(int total)
 		spInfo.Visible = true;
 		int sp_width = 321;
 		int sp_height = 284;
-		int d = rand() % 4;
+
+		int t = rand() % 2;
+		if (t == 0)
+		{
+			spInfo.Dir = DIR_LEFT;
+		}
+		else spInfo.Dir = DIR_RIGHT;
+
+		int w = rand() % 4;
 		if (mapType == 0)
 		{
-			switch (d) {
+			switch (w) {
 			case 0:
 				spInfo.X = t_scene.getSceneX() + scn_width - 40 * 0.3 * sp_width;
 				spInfo.Y = t_scene.getSceneY() + scn_height - 7 * 0.3 * sp_height;
@@ -263,7 +271,7 @@ void CrazyFighting::LoadNpc(int total)
 		}
 		else if (mapType == 1)
 		{
-			switch (d) {
+			switch (w) {
 			case 0:
 				spInfo.X = t_scene.getSceneX() + scn_width - 40 * 0.3 * sp_width;
 				spInfo.Y = t_scene.getSceneY() + scn_height - 5 * 0.3 * sp_height;
@@ -288,7 +296,7 @@ void CrazyFighting::LoadNpc(int total)
 		}
 		else if (mapType == 2)
 		{
-			switch (d) {
+			switch (w) {
 			case 0:
 				spInfo.X = t_scene.getSceneX() + scn_width - 40 * 0.3 * sp_width;
 				spInfo.Y = t_scene.getSceneY() + scn_height - 5 * 0.3 * sp_height;
@@ -387,7 +395,7 @@ void CrazyFighting::UpdateNpcPos()
 					(*it)->SetSequence((*it)->FRAME_WALK, 20);
 					break;
 				}
-				spAi->Wander((*it), t_scene.getBarrier(),1);
+				fspAi->Wander((*it), t_scene.getBarrier());
 			}
 			if ((*it)->CollideWith(player) && player->getAttacking() == false) {
 				if (isDelayCollision == false) {
