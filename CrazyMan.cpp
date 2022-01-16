@@ -26,13 +26,15 @@ CrazyMan::CrazyMan(LPCTSTR imgPath, int frameWidth, int frameHeight, int winWidt
 	shooting = false;
 	shootTime = 600;
 	attacking = false;
+
+	wanderTime = 30;
 }
 
 CrazyMan::~CrazyMan()
 {
 }
 // 更新玩家位置
-void CrazyMan::updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier)
+void CrazyMan::updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier, int isNPC)
 {
 	int nextStepX, nextStepY;
 	int SpeedX = 0, SpeedY = 0;
@@ -60,7 +62,7 @@ void CrazyMan::updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier)
 		SpeedY = -movingSpeed;
 		//计算下一步移动是否超过边界
 		nextStepY = GetY() + SpeedY;
-		if (nextStepY <= 0)
+		if (nextStepY <= 0 && isNPC == 0)
 		{
 			SpeedY = 0 - GetY();
 		}
@@ -72,7 +74,7 @@ void CrazyMan::updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier)
 		SpeedY = movingSpeed;
 		//计算下一步移动是否超过边界
 		nextStepY = GetY() + GetRatioSize().cy + SpeedY;
-		if (nextStepY >= win_height)
+		if (nextStepY >= win_height && isNPC == 0)
 		{
 			SpeedY = win_height - GetRatioSize().cy - GetY();
 		}
@@ -84,7 +86,7 @@ void CrazyMan::updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier)
 		SpeedY = 0;
 		//计算下一步移动是否超过边界
 		nextStepX = GetX() + SpeedX;
-		if (nextStepX <= 0)
+		if (nextStepX <= 0 && isNPC == 0)
 		{
 			SpeedX = 0 - GetX();
 		}
@@ -99,7 +101,7 @@ void CrazyMan::updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier)
 		SpeedY = 0;
 		//计算下一步移动是否超过边界
 		nextStepX = GetX() + GetRatioSize().cx + SpeedX;
-		if (nextStepX >= win_width)
+		if (nextStepX >= win_width && isNPC == 0)
 		{
 			SpeedX = win_width - GetRatioSize().cx - GetX();
 		}
@@ -131,6 +133,7 @@ void CrazyMan::updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier)
 		}
 	}
 }
+
 // 下落
 void CrazyMan::fallingDown()
 {
@@ -142,7 +145,7 @@ void CrazyMan::fallingDown()
 	}
 }
 // 处理上跳及下落
-void CrazyMan::jumpUpDown(T_Map* pBarrier)
+void CrazyMan::jumpUpDown(T_Map* pBarrier, int isNPC)
 {
 	// 为速度加上重力影响
 	jumpSpeed = jumpSpeed + gravity;
@@ -150,15 +153,14 @@ void CrazyMan::jumpUpDown(T_Map* pBarrier)
 	{
 		//SetDir(DIR_UP);
 		// 由于只处理上下方向，所以xDir设为一个不存在的方向，如-1
-		updatePostion(-1, DIR_UP, DIR_UP, pBarrier);
+		updatePostion(-1, DIR_UP, DIR_UP, pBarrier, isNPC);
 	}
 	else if (jumpSpeed > 0)  // 往下自由落体
 	{
 		SetDir(DIR_DOWN);
 		// 由于只处理上下方向，所以xDir设为一个不存在的方向，如-1
-		updatePostion(-1, DIR_DOWN, DIR_DOWN, pBarrier);
+		updatePostion(-1, DIR_DOWN, DIR_DOWN, pBarrier, isNPC);
 	}
-
 }
 
 // 重写碰撞检测，适配角色素材
@@ -291,3 +293,120 @@ bool CrazyMan::CollideWith(T_Sprite* target, int distance)
 		//       (abs((thisRect.top + ch/2)-(hitRec.top + th/2))<(ch+th)/2);
 
 }
+
+
+bool CrazyMan::FrontMissFoot(IN T_Map* map)
+{
+	// 如果背景为图片则不检测地图碰撞
+	if (map->getMapRows() == 0 && map->getMapCols() == 0)
+	{
+		mapBlockPT.x = -1;
+		mapBlockPT.y = -1;
+		return false;
+	}
+
+	// 如果地图不可见或角色不可见不检测地图碰撞
+	if ((!(map->IsVisible())) || (!(this->IsVisible())))
+	{
+		mapBlockPT.x = -1;
+		mapBlockPT.y = -1;
+		return false;
+	}
+
+	// 计算当前地图图层的矩形范围
+	int mapLeft = map->GetX();
+	int mapTop = map->GetY();
+	int mapRight = mapLeft + map->GetWidth();
+	int mapBottom = mapTop + map->GetHeight();
+
+	// 获得地图图层中使用的图块的宽高
+	int tW = map->getTileWidth();
+	int tH = map->getTileHeight();
+
+	int spLeft, spTop, spRight, spBottom;
+	// 计算当前角色前面区域的矩形范围
+
+	if (this->getFaceTo() == DIR_LEFT)
+	{
+		spLeft = (this->GetCollideRect()->left + this->GetCollideRect()->right) / 2 - 16;
+		spTop = (this->GetCollideRect()->top + this->GetCollideRect()->bottom) / 2 - 16;
+		spRight = (this->GetCollideRect()->left + this->GetCollideRect()->right) / 2 + 16;
+		spBottom = (this->GetCollideRect()->top + this->GetCollideRect()->bottom) / 2 - 16;
+	}
+	else if (this->getFaceTo() == DIR_RIGHT)
+	{
+		spLeft = this->GetCollideRect()->left + 64;
+		spTop = this->GetCollideRect()->top + 64;
+		spRight = this->GetCollideRect()->right + 64;
+		spBottom = this->GetCollideRect()->bottom + 64;
+	}
+
+
+	// 获得当前地图中图块的总列数
+	int tNumCols = map->getMapCols();
+	// 获得当前地图中图块的总行数
+	int tNumRows = map->getMapRows();
+
+	// 计算当前角色的实际的宽高
+	int spW = spRight - spLeft;
+	int spH = spBottom - spTop;
+
+	RECT lprcDst;
+	// 根据以上计算的图层的矩形范围和角色的矩形范围构造两个矩形对象
+	RECT mapRect = { mapLeft, mapTop, mapRight, mapBottom };
+	RECT spRect = { spLeft, spTop, spRight, spBottom };
+	// 如果两个矩形对，则退出函数
+	if ((IntersectRect(&lprcDst, &mapRect, &spRect)) == FALSE)
+	{
+		mapBlockPT.x = -1;
+		mapBlockPT.y = -1;
+		return false;
+	}
+
+	// 如果两个矩形对象发生了碰撞，首先计算角色矩形上、下、左、右的矩形区域
+	int startRow = (spTop <= mapTop) ? 0 : (spTop - mapTop) / tH;
+	int endRow = (spBottom < mapBottom) ? (spBottom - 1 - mapTop) / tH : tNumRows - 1;
+	int startCol = (spLeft <= mapLeft) ? 0 : (spLeft - mapLeft) / tW;
+	int endCol = (spRight < mapRight) ? (spRight - 1 - mapLeft) / tW : tNumCols - 1;
+
+	// 根据角色矩形上、下、左、右的矩形区域判断哪个矩形区域为障碍
+	for (int row = startRow; row <= endRow; ++row)
+	{
+		for (int col = startCol; col <= endCol; ++col)
+		{
+			// 如果当前矩形所在的图块在地图数据中为非0，就表示是障碍
+			if (map->getTile(col, row) == 0)
+			{
+				mapBlockPT.x = col;	// 记录当前障碍图块的列
+				mapBlockPT.y = row;	// 记录当前障碍图块的行
+
+				// 根据角色当前的方向计算碰撞前的位置
+				int x = GetX(), y = GetY();
+				switch (GetDir())
+				{
+				case DIR_LEFT:
+					x = GetX() + GetSpeed();
+					y = GetY();
+					break;
+				case DIR_RIGHT:
+					x = GetX() - GetSpeed();
+					y = GetY();
+					break;
+				case DIR_UP:
+					x = GetX();
+					y = GetY() + GetSpeed();
+					break;
+				case DIR_DOWN:
+					x = GetX();
+					y = GetY() - GetSpeed();
+					break;
+				}
+				// 将角色定位在撞前的位置
+				SetPosition(x, y);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+

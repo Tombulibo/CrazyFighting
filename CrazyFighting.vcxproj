@@ -142,6 +142,7 @@
     <ClCompile Include="AppMain.cpp" />
     <ClCompile Include="CrazyFighting.cpp" />
     <ClCompile Include="CrazyMan.cpp" />
+    <ClCompile Include="GameAI.cpp" />
     <ClCompile Include="Horizontal_Scene.cpp" />
     <ClCompile Include="MyMenu.cpp" />
     <ClCompile Include="TinyEngine\T_AI.cpp" />
@@ -159,6 +160,7 @@
   <ItemGroup>
     <ClInclude Include="CrazyFighting.h" />
     <ClInclude Include="CrazyMan.h" />
+    <ClInclude Include="GameAI.h" />
     <ClInclude Include="Horizontal_Scene.h" />
     <ClInclude Include="MyMenu.h" />
     <ClInclude Include="resource.h" />

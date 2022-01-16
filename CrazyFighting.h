@@ -16,7 +16,7 @@ class CrazyFighting :
     public T_Engine
 {
 private:
-    static const int NPC_NUM = 2; //NPC总数
+    static const int NPC_NUM = 10; //NPC总数
     static const int SUPER_TIME = 3000;
 
     //定义要使用的类对象

@@ -1,4 +1,5 @@
 #include "CrazyFighting.h"
+#include "GameAI.h"
 
 //加载地图
 void CrazyFighting::LoadMap()
@@ -144,7 +145,7 @@ void CrazyFighting::UpdateAnimation()
 					(*it)->SetVisible(false);
 				}
 			}
-			if ((*it)->IsVisible() == true && (*it)->IsActive() == true) (*it)->LoopFrame();
+			else if ((*it)->IsVisible() == true && (*it)->IsActive() == true) (*it)->LoopFrame();
 		}
 	}
 
@@ -221,7 +222,8 @@ CrazyFighting::CrazyFighting(HINSTANCE h_instance, LPCTSTR sz_winclass, LPCTSTR 
 void CrazyFighting::LoadNpc(int total)
 {
 	SPRITEINFO spInfo;
-	for (int i = 0; i < total; i++) {
+	for (int i = 0; i < total; i++) 
+	{
 		spInfo.Active = true;
 		spInfo.Dead = false;
 		spInfo.Rotation = TRANS_NONE;
@@ -231,34 +233,91 @@ void CrazyFighting::LoadNpc(int total)
 		spInfo.Speed = 4;
 		spInfo.Alpha = 255;
 		spInfo.Visible = true;
-		int sp_width = 40;
-		int sp_height = 40;
-		int d = rand() % 2;
-		switch (d) {
-		case 0:
-			spInfo.Dir = DIR_RIGHT;
-			spInfo.X = t_scene.getSceneY() + scn_height - 10 * sp_height;
-			spInfo.Y = t_scene.getSceneY() + scn_height - 15 * sp_height;
-			break;
-		case 1:
-			spInfo.Dir = DIR_LEFT;
-			spInfo.X = t_scene.getSceneY() + scn_height - 10 * sp_height;
-			spInfo.Y = t_scene.getSceneY() + scn_height - 15 * sp_height;
-			break;
-		}
+		int sp_width = 321;
+		int sp_height = 284;
+		int d = rand() % 4;
 		if (mapType == 0)
 		{
-			npc_set.push_back(new CrazyMan(L".\\res\\sprite\\NPC1.png", 321, 284));
+			switch (d) {
+			case 0:
+				spInfo.X = t_scene.getSceneX() + scn_width - 40 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 7 * 0.3 * sp_height;
+				break;
+			case 1:
+				spInfo.X = t_scene.getSceneX() + scn_width - 35 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 7 * 0.3 * sp_height;
+				break;
+			case 2:
+				spInfo.X = t_scene.getSceneX() + scn_width - 30 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 7 * 0.3 * sp_height;
+				break;
+			case 3:
+				spInfo.X = t_scene.getSceneX() + scn_width - 25 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 7 * 0.3 * sp_height;
+				break;
+			case 4:
+				spInfo.X = t_scene.getSceneX() + scn_width - 20 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 6 * 0.3 * sp_height;
+				break;
+			}
 		}
 		else if (mapType == 1)
 		{
-			npc_set.push_back(new CrazyMan(L".\\res\\sprite\\NPC2.png", 321, 284));
+			switch (d) {
+			case 0:
+				spInfo.X = t_scene.getSceneX() + scn_width - 40 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 5 * 0.3 * sp_height;
+				break;
+			case 1:
+				spInfo.X = t_scene.getSceneX() + scn_width - 35 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 6 * 0.3 * sp_height;
+				break;
+			case 2:
+				spInfo.X = t_scene.getSceneX() + scn_width - 30 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 7 * 0.3 * sp_height;
+				break;
+			case 3:
+				spInfo.X = t_scene.getSceneX() + scn_width - 25 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 7 * 0.3 * sp_height;
+				break;
+			case 4:
+				spInfo.X = t_scene.getSceneX() + scn_width - 20 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 6 * 0.3 * sp_height;
+				break;
+			}
 		}
 		else if (mapType == 2)
 		{
-			npc_set.push_back(new CrazyMan(L".\\res\\sprite\\NPC3.png", 321, 284));
+			switch (d) {
+			case 0:
+				spInfo.X = t_scene.getSceneX() + scn_width - 40 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 5 * 0.3 * sp_height;
+				break;
+			case 1:
+				spInfo.X = t_scene.getSceneX() + scn_width - 35 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 5 * 0.3 * sp_height;
+				break;
+			case 2:
+				spInfo.X = t_scene.getSceneX() + scn_width - 30 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 8 * 0.3 * sp_height;
+				break;
+			case 3:
+				spInfo.X = t_scene.getSceneX() + scn_width - 25 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 5 * 0.3 * sp_height;
+				break;
+			case 4:
+				spInfo.X = t_scene.getSceneX() + scn_width - 20 * 0.3 * sp_width;
+				spInfo.Y = t_scene.getSceneY() + scn_height - 4 * 0.3 * sp_height;
+				break;
+			}
 		}
+		int npc_type = rand() % 3 + 3;
+		if (npc_type == 3) npc_set.push_back(new CrazyMan(L".\\res\\sprite\\NPC1.png", 321, 284));
+		else if (npc_type == 4) npc_set.push_back(new CrazyMan(L".\\res\\sprite\\NPC2.png", 321, 284));
+		else if (npc_type == 5) npc_set.push_back(new CrazyMan(L".\\res\\sprite\\NPC3.png", 321, 284));
+		
 		CrazyMan* sp = npc_set.back();
+		sp->setType(npc_type);
 		sp->Initiate(spInfo);
 		sp->SetLayerTypeID(LAYER_NPC);
 		GAMELAYER gamelayer;
@@ -268,9 +327,9 @@ void CrazyFighting::LoadNpc(int total)
 		gamelayer.layer->setZorder(gamelayer.z_order);
 		t_scene.Append(gamelayer);
 		sp = NULL;
-
 	}
 }
+
 
 //NPC更新处理
 void CrazyFighting::UpdateNpcPos()
@@ -278,22 +337,58 @@ void CrazyFighting::UpdateNpcPos()
 	if (npc_set.size() == 0) {
 		return;
 	}
-	T_AI* spAi = new T_AI(4);
+	GameAI* spAi = new GameAI(4);
+	T_AI* fspAi = new T_AI(4);
 	vCrazyManSet::iterator it;
 	for (it = npc_set.begin(); it != npc_set.end(); it++) {
-		if ((*it)->IsActive() == true && (*it)->IsVisible() == true) {
-			int npc_dir = (*it)->GetDir();
-			switch (npc_dir) {
-			case DIR_LEFT:
-				(*it)->SetRotation(TRANS_HFLIP_NOROT);
-				(*it)->SetSequence((*it)->FRAME_WALK, 20);
-				break;
-			case DIR_RIGHT:
-				(*it)->SetRotation(TRANS_NONE);
-				(*it)->SetSequence((*it)->FRAME_WALK, 20);
-				break;
+		if ((*it)->IsDead() == false && (*it)->IsActive() == true && (*it)->IsVisible() == true)
+		{
+			if ((*it)->getType() == 3 || (*it)->getType() == 4)
+			{
+				(*it)->SetActive(true);
+				(*it)->setJumping(true);
+				(*it)->setJumpSpeed(20);
+				(*it)->setFallen(false);
+
+				if ((*it)->GetDir() == DIR_LEFT)
+				{
+					(*it)->SetRotation(TRANS_HFLIP_NOROT);
+					(*it)->SetSequence((*it)->FRAME_WALK, 20);
+					(*it)->updatePostion(DIR_LEFT, 0, 0, t_scene.getBarrier(), 1);
+				}
+				else if ((*it)->GetDir() == DIR_RIGHT)
+				{
+					(*it)->SetRotation(TRANS_NONE);
+					(*it)->SetSequence((*it)->FRAME_WALK, 20);
+					(*it)->updatePostion(DIR_RIGHT, 0, 0, t_scene.getBarrier(), 1);
+				}
+				if ((*it)->getJumping())
+				{
+					(*it)->SetSequence((*it)->FRAME_WALK, 20);
+					(*it)->jumpUpDown(t_scene.getBarrier(), 1);
+					(*it)->setFallen(true);
+				}
+				if ((*it)->getFalling() == false)
+				{
+					(*it)->fallingDown();
+				}
+				spAi->Wander((*it), t_scene.getBarrier(),0);
 			}
-			spAi->Wander((*it), t_scene.getBarrier());
+			else if ((*it)->getType() == 5)
+			{
+				int npc_dir = (*it)->GetDir();
+				switch (npc_dir) {
+				case DIR_LEFT:
+					(*it)->SetRotation(TRANS_HFLIP_NOROT);
+					(*it)->SetSequence((*it)->FRAME_WALK, 20);
+					break;
+				case DIR_RIGHT:
+					(*it)->SetRotation(TRANS_NONE);
+					(*it)->SetSequence((*it)->FRAME_WALK, 20);
+					break;
+				}
+				spAi->Wander((*it), t_scene.getBarrier(),1);
+			}
 			if ((*it)->CollideWith(player) && player->getAttacking() == false) {
 				if (isDelayCollision == false) {
 					updateLifeCount = true;
@@ -303,6 +398,7 @@ void CrazyFighting::UpdateNpcPos()
 		}
 	}
 	delete spAi;
+	delete fspAi;
 }
 
 // 加载炮弹

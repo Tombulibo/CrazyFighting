@@ -5,7 +5,7 @@
 class CrazyMan : public T_Sprite
 {
 protected:
-	int type;				// 角色类型，0为女射手，1为狂战士，2为元素使
+	int type;				// 角色类型，0为女射手，1为狂战士，2为元素使，3为NPC1，4为NPC2，5为NPC3
 
 	// 与跳跃相关变量
 	int jumpSpeed;
@@ -18,8 +18,8 @@ protected:
 	bool shooting;			// 是否射箭
 	int shootTime;			// 射箭间隔时间
 	bool attacking;			// 是否攻击
-	//int shootTime;			// 射箭间隔时间
-	//vSpriteSet arrow_set;	// 箭容器
+	int wanderTime;			// 徘徊时间
+
 
 	int win_width, win_height;
 
@@ -54,8 +54,8 @@ public:
 	void setFaceTo(int fto) { faceTo = fto; }
 	int getFaceTo() { return faceTo; }
 
-	void updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier);
-	void jumpUpDown(T_Map* pBarrier);
+	void updatePostion(int xDir, int yDir, int jumpDir, T_Map* pBarrier, int isNPC = 0);
+	void jumpUpDown(T_Map* pBarrier, int isNPC = 0);
 	void fallingDown();
 
 	void setShooting(bool shoot) { shooting = shoot; }
@@ -66,6 +66,11 @@ public:
 
 	void setAttacking(bool attack) { attacking = attack; }
 	bool getAttacking() { return attacking; }
+
+	void setWanderTime(int t) { wanderTime = t; }
+	int getWanderTime() { return wanderTime; }
+
+	bool FrontMissFoot(IN T_Map* map);			//
 
 	bool CollideWith(IN T_Map* map);			// 重写碰撞检测，适配角色素材
 	bool CollideWith(T_Sprite* target, int distance = 0);

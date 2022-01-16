@@ -63,6 +63,9 @@
     <ClCompile Include="Horizontal_Scene.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="GameAI.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TinyEngine\T_AI.h">
@@ -117,6 +120,9 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Horizontal_Scene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GameAI.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
