@@ -528,16 +528,42 @@ void GameAI::Chase(CrazyMan* npc_sp, CrazyMan* player, T_Map* map)
 	RECT testRect;
 	GetCHitRect(npc_sp, 1, testRect);
 
-	if ((IntersectRect(&lprcDst, &playerRect, &testRect)) == FALSE)
+	if ((IntersectRect(&lprcDst, &playerRect, &testRect)) == FALSE && fabs(npc_sp->GetX() - player->GetX()) < 200)
 	{
-		if (npc_sp->GetX() > player->GetX()) 
+		int t = npc_sp->getWanderTime();
+		if (npc_sp->GetX() > player->GetX())
 		{
-			npc_sp->SetDir(DIR_LEFT);
+			if (t > 20)
+			{
+				npc_sp->setFaceTo(DIR_LEFT);
+				npc_sp->SetDir(DIR_LEFT);
+			}
+			else if (t > 0)
+			{
+				npc_sp->setFaceTo(DIR_RIGHT);
+				npc_sp->SetDir(DIR_RIGHT);
+			}
 		}
-		else 
+		else
 		{
-			npc_sp->SetDir(DIR_RIGHT);
+			if (t > 20)
+			{
+				npc_sp->setFaceTo(DIR_RIGHT);
+				npc_sp->SetDir(DIR_RIGHT);
+			}
+			else if (t > 0)
+			{
+				npc_sp->setFaceTo(DIR_LEFT);
+				npc_sp->SetDir(DIR_LEFT);
+			}
 		}
+		t--;
+		npc_sp->setWanderTime(t);
+		if (t < 0)
+		{
+			npc_sp->setWanderTime(30);
+		}
+
 		//if (!npc_sp->CollideWith(map)) 
 		//{
 		//	if (npc_sp->getJumping() == false)

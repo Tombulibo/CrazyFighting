@@ -23,6 +23,8 @@ private:
     Horizontal_Scene t_scene;		//游戏场景
     CrazyMan* player;		//游戏玩家
     vCrazyManSet npc_set;   //NPC角色集合
+    vCrazyManSet trap_set;        //陷阱集
+
     int playerType;         //玩家类型，0为女射手，1为狂战士，2为元素使
     int mapType;            //地图类型，0为田园，1为矿洞，2为地狱
 
@@ -89,6 +91,7 @@ private:
     void LoadPlayer();								// 加载游戏玩家角色
     void LoadMap();									// 加载游戏地图场景	
     void LoadNpc(int total);                        // 加载游戏NPC
+    void LoadTrap(int num, int level);               // 加载地图陷阱
 
     void UpdatePlayerPos();							// 更新玩家角色的位置
     void updatePlayerlife();
