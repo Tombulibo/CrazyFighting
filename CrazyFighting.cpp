@@ -7,24 +7,24 @@ void CrazyFighting::LoadMap()
 
 	if (mapType == 0)
 	{
-		t_scene.LoadTxtMap("map\\01\\background.txt");
-		t_scene.LoadTxtMap("map\\01\\obstacle.txt");
-		t_scene.LoadTxtMap("map\\01\\mask.txt");
-		t_scene.LoadTxtMap("map\\01\\stone.txt");
-		t_scene.LoadTxtMap("map\\01\\bush.txt");
-		t_scene.LoadTxtMap("map\\01\\box.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\01\\background.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\01\\obstacle.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\01\\mask.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\01\\stone.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\01\\bush.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\01\\box.txt");
 	}
 	else if (mapType == 1)
 	{
-		t_scene.LoadTxtMap("map\\02\\gamelevel2_back.txt");
-		t_scene.LoadTxtMap("map\\02\\gamelevel2_barrier.txt");
-		t_scene.LoadTxtMap("map\\02\\gamelevel2_mask.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\02\\gamelevel2_back.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\02\\gamelevel2_barrier.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\02\\gamelevel2_mask.txt");
 	}
 	else if (mapType == 2)
 	{
-		t_scene.LoadTxtMap("map\\03\\background.txt");
-		t_scene.LoadTxtMap("map\\03\\barrier.txt");
-		t_scene.LoadTxtMap("map\\03\\mask.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\03\\background.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\03\\barrier.txt");
+		t_scene.LoadTxtMap(".\\res\\map\\03\\mask.txt");
 	}
 
 	scn_width = t_scene.getSceneLayers()->back().layer->GetWidth();
@@ -664,22 +664,21 @@ void CrazyFighting::GameInit()
 	MapMenuInit();
 	AboutMenuInit();
 	HelpMenuInit();
+	LastMenuInit();
 	//MainGameInit();
 
 	if (!ds.CreateDS(m_hWnd)) return;
 
-	openmusic_buffer.LoadWave(ds, L".\\sound\\GameStart.wav");
-	startmusic_buffer.LoadWave(ds, L".\\sound\\GameOpen.wav");
-	mapmusic01_buffer.LoadWave(ds, L".\\sound\\Map01.wav");
-	mapmusic02_buffer.LoadWave(ds, L".\\sound\\Map02.wav");
-	mapmusic03_buffer.LoadWave(ds, L".\\sound\\Map03.wav");
-	gameovermusic_buffer.LoadWave(ds, L".\\sound\\gameover.wav");
-	victorymusic_buffer.LoadWave(ds, L".\\sound\\victory.wav");
+	openmusic_buffer.LoadWave(ds, L".\\res\\sound\\GameStart.wav");
+	startmusic_buffer.LoadWave(ds, L".\\res\\sound\\GameOpen.wav");
+	mapmusic01_buffer.LoadWave(ds, L".\\res\\sound\\Map01.wav");
+	mapmusic02_buffer.LoadWave(ds, L".\\res\\sound\\Map02.wav");
+	mapmusic03_buffer.LoadWave(ds, L".\\res\\sound\\Map03.wav");
+	gameovermusic_buffer.LoadWave(ds, L".\\res\\sound\\gameover.wav");
+	victorymusic_buffer.LoadWave(ds, L".\\res\\sound\\victory.wav");
 	
-	//robot_buffer.LoadWave(ds, L".\\sound\\robot.wav");
-	mousedown_buffer.LoadWave(ds, L".\\sound\\mousedown.wav");
-	mousemove_buffer.LoadWave(ds, L".\\sound\\mouseover.wav");
-	//explosionSound.LoadWave(ds, L".\\sound\\blast.wav");
+	mousedown_buffer.LoadWave(ds, L".\\res\\sound\\mousedown.wav");
+	mousemove_buffer.LoadWave(ds, L".\\res\\sound\\mouseover.wav");
 
 	openmusic_buffer.Play(true);
 }
@@ -794,6 +793,7 @@ void CrazyFighting::GamePaint(HDC hdc)
 			hdc, 0, 0, WIN_WIDTH, WIN_HEIGHT,
 			Color(150, 0, 0, 0));
 		T_Graph::PaintText(hdc, textRec, L"你死了", 100, L"黑体", Color::Red, FontStyleBold, StringAlignmentCenter);
+		PaintLastMenu(hdc);
 	}
 	else if (GameState == GAME_WIN)
 	{
@@ -807,6 +807,7 @@ void CrazyFighting::GamePaint(HDC hdc)
 			hdc, 0, 0, WIN_WIDTH, WIN_HEIGHT,
 			Color(150, 255, 255, 255));
 		T_Graph::PaintText(hdc, textRec, L"挑战成功", 100, L"黑体", Color::Red, FontStyleBold, StringAlignmentCenter);
+		PaintLastMenu(hdc);
 	}
 }
 
@@ -923,14 +924,27 @@ void CrazyFighting::GameMouseAction(int x, int y, int Action)
 
 	if (Action == MOUSE_MOVE)//当鼠标选中按钮时，按钮改变状态换图片颜色
 	{
-		startmenu.MenuMouseMove(x, y);
-		aboutmenu.MenuMouseMove(x, y);
-		helpmenu.MenuMouseMove(x, y);
-		runmenu.MenuMouseMove(x, y);
-		if (GameState == GAME_RUN)
+		if (GameState == GAME_START)
 		{
-
+			if (chooseState == 0)
+			{
+				startmenu.MenuMouseMove(x, y);
+			}
+			else if (chooseState == 1)
+			{
+				playermenu.MenuMouseMove(x, y);
+			}
+			else if (chooseState == 2)
+			{
+				mapmenu.MenuMouseMove(x, y);
+			}
 		}
+		if (GameState == GAME_ABOUT) aboutmenu.MenuMouseMove(x, y);
+		if (GameState == GAME_HELP) helpmenu.MenuMouseMove(x, y);
+		
+		if (GameState == GAME_OVER || GameState == GAME_WIN) lastmenu.MenuMouseMove(x, y);
+		if (GameState == GAME_RUN) runmenu.MenuMouseMove(x, y);
+		
 	}
 	if (Action == MOUSE_LCLICK)
 	{
@@ -1093,6 +1107,25 @@ void CrazyFighting::GameMouseAction(int x, int y, int Action)
 				runmenu.inrange = false;
 			}
 		}
+		if (GameState == GAME_OVER)
+		{
+			int index = helpmenu.MenuMouseClick(x, y);
+			if (index >= 0)
+			{
+				switch (index)
+				{
+				case 0://返回开始菜单
+					GameEnd();
+					GameInit();
+					GameState = GAME_START;
+					openmusic_buffer.Play(true);
+					break;
+				case 1://退出游戏
+					SendMessage(m_hWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
+					break;
+				}
+			}
+		}
 	}
 }
 
@@ -1103,13 +1136,13 @@ void CrazyFighting::StartMenuInit()
 	int btn_width = 0, btn_height = 0;
 	Color normalClr, focusClr;
 	wstring menuItems[] = { L"开始",L"关于",L"帮助",L"退出" };		//按钮文字
-	startmenu.SetMenuBkg(L".\\res\\beach.jpg");			//设置菜单背景图片
+	startmenu.SetMenuBkg(L".\\res\\game\\start_back.jpg");			//设置菜单背景图片
 	//长条形按钮菜单项
 	btn_width = 175;										//按钮宽
 	btn_height = 60;										//按钮高
 	normalClr = Color::White;								//按钮正常状态文字颜色
 	focusClr = Color::Blue;									//按钮选中状态文字颜色
-	startmenu.SetBtnBmp(L".\\res\\button_blue.png", btn_width, btn_height);//设置按钮图片
+	startmenu.SetBtnBmp(L".\\res\\game\\button_blue.png", btn_width, btn_height);//设置按钮图片
 	//设置菜单信息
 	MENU_INFO menuInfo;
 	menuInfo.align = 1;					 //对齐方式居中
@@ -1163,13 +1196,13 @@ void CrazyFighting::AboutMenuInit()
 	int btn_width = 0, btn_height = 0;
 	Color normalClr, focusClr;
 	wstring menuItems[] = { L"返回",L"退出" };
-	aboutmenu.SetMenuBkg(L".\\res\\menuback01.jpg");//设置背景图片
+	aboutmenu.SetMenuBkg(L".\\res\\game\\about_back.jpg");//设置背景图片
 	//长条形按钮菜单项
 	btn_width = 100;			//按钮宽度
 	btn_height = 102;			//按钮高度
-	normalClr = Color::LightGreen;	//按钮正常时，文字颜色为蓝色
-	focusClr = Color::Blue;	//鼠标在按钮上时，文字颜色为白色
-	aboutmenu.SetBtnBmp(L".\\res\\button_bubble.png", btn_width, btn_height);//菜单按钮图片
+	normalClr = Color::LightGreen;	//按钮正常时
+	focusClr = Color::Blue;	//鼠标在按钮上时
+	aboutmenu.SetBtnBmp(L".\\res\\game\\button_bubble.png", btn_width, btn_height);//菜单按钮图片
 	//设置菜单信息
 	MENU_INFO menuInfo;
 	menuInfo.align = 1;					 //对齐方式居中
@@ -1202,13 +1235,13 @@ void CrazyFighting::HelpMenuInit()
 	int btn_width = 0, btn_height = 0;
 	Color normalClr, focusClr;
 	wstring menuItems[] = { L"返回",L"退出游戏" };
-	helpmenu.SetMenuBkg(L".\\res\\seabed.jpg");//设置背景图片
+	helpmenu.SetMenuBkg(L".\\res\\game\\help_back.jpg");//设置背景图片
 	//长条形按钮菜单项
 	btn_width = 100;
 	btn_height = 102;
-	normalClr = Color::LightGreen;
-	focusClr = Color::White;
-	helpmenu.SetBtnBmp(L".\\res\\button_bubble.png", btn_width, btn_height);
+	normalClr = Color::LightGreen;	//按钮正常时
+	focusClr = Color::Blue;	//鼠标在按钮上时
+	helpmenu.SetBtnBmp(L".\\res\\game\\button_bubble.png", btn_width, btn_height);
 	//设置菜单信息
 	MENU_INFO menuInfo;
 	menuInfo.align = 1;					 //对齐方式居中
@@ -1237,7 +1270,7 @@ void CrazyFighting::HelpMenuInit()
 //游戏运行菜单初始化
 void CrazyFighting::RunMenuInit()
 {
-	menuArea.LoadImageFile(L".\\res\\menu_area.png");   //载入运行菜单区域图片
+	menuArea.LoadImageFile(L".\\res\\game\\menu_area.png");   //载入运行菜单区域图片
 	int x = 0, y = 0;
 	int btn_width = 0, btn_height = 0;
 	Color normalClr, focusClr;
@@ -1248,7 +1281,7 @@ void CrazyFighting::RunMenuInit()
 	btn_height = 60;
 	normalClr = Color::White;
 	focusClr = Color::LightGreen;
-	runmenu.SetBtnBmp(L".\\res\\button_blue.png", btn_width, btn_height);
+	runmenu.SetBtnBmp(L".\\res\\game\\button_blue.png", btn_width, btn_height);
 	//设置菜单信息
 	MENU_INFO menuInfo;
 	menuInfo.align = 1;					 //对齐方式居中
@@ -1281,13 +1314,13 @@ void CrazyFighting::PlayerMenuInit()
 	int btn_width = 0, btn_height = 0;
 	Color normalClr, focusClr;
 	wstring menuItems[] = { L"女射手",L"狂战士",L"元素使",L"返回" };
-	playermenu.SetMenuBkg(L".\\res\\seabed.jpg");//设置背景图片
+	playermenu.SetMenuBkg(L".\\res\\map\\01\\Background1.png");//设置背景图片
 	//长条形按钮菜单项
 	btn_width = 100;
 	btn_height = 102;
-	normalClr = Color::LightGreen;
-	focusClr = Color::White;
-	playermenu.SetBtnBmp(L".\\res\\button_bubble.png", btn_width, btn_height);
+	normalClr = Color::LightGreen;	//按钮正常时
+	focusClr = Color::Blue;	//鼠标在按钮上时
+	playermenu.SetBtnBmp(L".\\res\\game\\button_bubble.png", btn_width, btn_height);
 	//设置菜单信息
 	MENU_INFO menuInfo;
 	menuInfo.align = 1;					 //对齐方式居中
@@ -1320,13 +1353,13 @@ void CrazyFighting::MapMenuInit()
 	int btn_width = 0, btn_height = 0;
 	Color normalClr, focusClr;
 	wstring menuItems[] = { L"田园",L"矿洞",L"地狱",L"返回" };
-	mapmenu.SetMenuBkg(L".\\res\\seabed.jpg");//设置背景图片
+	mapmenu.SetMenuBkg(L".\\res\\map\\01\\Background1.png");//设置背景图片
 	//长条形按钮菜单项
 	btn_width = 100;
 	btn_height = 102;
-	normalClr = Color::LightGreen;
-	focusClr = Color::White;
-	mapmenu.SetBtnBmp(L".\\res\\button_bubble.png", btn_width, btn_height);
+	normalClr = Color::LightGreen;	//按钮正常时
+	focusClr = Color::Blue;	//鼠标在按钮上时
+	mapmenu.SetBtnBmp(L".\\res\\game\\button_bubble.png", btn_width, btn_height);
 	//设置菜单信息
 	MENU_INFO menuInfo;
 	menuInfo.align = 1;					 //对齐方式居中
@@ -1350,6 +1383,43 @@ void CrazyFighting::MapMenuInit()
 	}
 	mapmenu.SetClickSound(&mousedown_buffer);
 	mapmenu.SetMoveSound(&mousemove_buffer);
+}
+
+void CrazyFighting::LastMenuInit()
+{
+	int x = 0, y = 0;
+	int btn_width = 0, btn_height = 0;
+	Color normalClr, focusClr;
+	wstring menuItems[] = { L"返回",L"退出游戏" };
+	//长条形按钮菜单项
+	btn_width = 100;
+	btn_height = 102;
+	normalClr = Color::LightGreen;	//按钮正常时
+	focusClr = Color::Blue;	//鼠标在按钮上时
+	lastmenu.SetBtnBmp(L".\\res\\game\\button_bubble.png", btn_width, btn_height);
+	//设置菜单信息
+	MENU_INFO menuInfo;
+	menuInfo.align = 1;					 //对齐方式居中
+	menuInfo.space = MENU_SPACE;		 //菜单项之间的间隔距离
+	menuInfo.width = btn_width;			 //菜单项宽
+	menuInfo.height = btn_height;		 //	菜单项高
+	menuInfo.fontName = L"黑体";		 //菜单项字体
+	menuInfo.isBold = true;				 //是否粗体
+	menuInfo.normalTextColor = normalClr;//正常状态文字颜色
+	menuInfo.focusTextColor = focusClr;	 //选中状态文字颜色
+	lastmenu.SetMenuInfo(menuInfo);
+	for (int i = 0; i < 2; i++) {
+		x = i * (btn_width + MENU_SPACE) + (wndWidth - 3 * btn_width - MENU_SPACE) / 2;
+		y = wnd_height - 2 * btn_height;
+
+		MENUITEM mItem;
+		mItem.pos.x = x;
+		mItem.pos.y = y;
+		mItem.ItemName = menuItems[i];
+		lastmenu.AddMenuItem(mItem);
+	}
+	lastmenu.SetClickSound(&mousedown_buffer);
+	lastmenu.SetMoveSound(&mousemove_buffer);
 }
 
 //开始菜单绘制
@@ -1447,11 +1517,15 @@ void CrazyFighting::PaintMapMenu(HDC hdc)
 	mapmenu.DrawMenu(hdc);
 }
 
+void CrazyFighting::PaintLastMenu(HDC hdc)
+{
+	lastmenu.DrawMenu(hdc);
+}
+
 // 加载游戏图片资源
 void CrazyFighting::LoadImageRes()
 {
 	if (lifeImg == NULL) lifeImg = new T_Graph(L".\\res\\game\\life.png");
-	//if (scoreImg == NULL) scoreImg = new T_Graph(L".\\res\\game\\score.png");
 	if (levelImg == NULL) levelImg = new T_Graph(L".\\res\\game\\Level.png");
 	if (totalscoreBmp == NULL) totalscoreBmp = new T_Graph(L".\\res\\game\\totalscore.png");
 }

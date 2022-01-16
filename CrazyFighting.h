@@ -44,6 +44,7 @@ private:
     MyMenu runmenu;					//游戏运行菜单类对象
     T_Menu playermenu;              //游戏选人菜单
     T_Menu mapmenu;                 //游戏选地图菜单
+    T_Menu lastmenu;
     int chooseState;                //游戏选择状态
 
     //………………………………………………………………………………………………………
@@ -80,10 +81,8 @@ private:
     AudioDXBuffer mapmusic01_buffer;
     AudioDXBuffer mapmusic02_buffer;
     AudioDXBuffer mapmusic03_buffer;
-    //AudioDXBuffer robot_buffer;
     AudioDXBuffer mousedown_buffer;
     AudioDXBuffer mousemove_buffer;
-    //AudioDXBuffer explosionSound;
     AudioDXBuffer gameovermusic_buffer;
     AudioDXBuffer victorymusic_buffer;
 
@@ -128,12 +127,14 @@ public:
     void RunMenuInit();					//游戏运行菜单初始化
     void PlayerMenuInit();              //游戏选人菜单初始化
     void MapMenuInit();                 //游戏选地图菜单初始化
+    void LastMenuInit();
 
     void PaintStartMenu(HDC hdc);		//绘制开始菜单
     void PaintAboutMenu(HDC hdc);		//绘制关于菜单
     void PaintHelpMenu(HDC hdc);		//绘制帮助菜单
     void PaintPlayerMenu(HDC hdc);      //绘制游戏选人菜单
     void PaintMapMenu(HDC hdc);         //绘制游戏选地图菜单
+    void PaintLastMenu(HDC hdc);
 
     void MainGameInit();				//方块游戏初始化
     void PaintMainGame(HDC hdc);		//绘制方块游戏
