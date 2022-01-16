@@ -16,13 +16,8 @@ class CrazyFighting :
     public T_Engine
 {
 private:
-    //重新定义动画帧序列
-    static int FRAME_LEFT[20]; //左方向的帧动画
-    static int FRAME_RIGHT[20]; //右方向的帧动画
-    static int FRAME_UP[20];
-    static int FRAME_DOWN[20];
-    static const int NPC_NUM = 10; //NPC总数
-    static const int SUPER_TIME = 5000;
+    static const int NPC_NUM = 2; //NPC总数
+    static const int SUPER_TIME = 3000;
 
     //定义要使用的类对象
     Horizontal_Scene t_scene;		//游戏场景
@@ -55,7 +50,7 @@ private:
     long BonusLoadStartTime;						// 奖励加载计时
     long BubbleLoadStartTime;						// Bubble加载计时
 
-    int GameLevel;									// 游戏关数计数器
+    //int GameLevel;									// 游戏关数计数器
     int LifeCount = 3;									// 玩家生命计数器
     int ScoreCount = 0;									// 玩家得分累计
     //int LevelScore;									// 每关得分
@@ -74,7 +69,7 @@ private:
     T_Graph* lifeImg;								// 状态栏玩家生命数小图片
     T_Graph* levelImg;								// 游戏关计数小图片
     T_Graph* totalscoreBmp;							// 状态栏玩家总分数小图片
-    T_Graph* scoreImg;								// 状态栏玩家得分小图片
+    //T_Graph* scoreImg;								// 状态栏玩家得分小图片
 
     //声音
     AudioDX ds;

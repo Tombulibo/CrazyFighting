@@ -1,11 +1,5 @@
 #include "CrazyFighting.h"
 
-//重新定义帧序列
-int CrazyFighting::FRAME_LEFT[20] = { 0, 0, 1, 1, 1, 1, 2, 2, 2, 2, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2 };
-int CrazyFighting::FRAME_RIGHT[20] = { 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5 };
-int CrazyFighting::FRAME_UP[20] = { 6, 6, 7, 7, 7, 7, 8, 8, 8, 8, 6, 6, 7, 7, 7, 7, 8, 8, 8, 8 };
-int CrazyFighting::FRAME_DOWN[20] = { 9, 9, 10, 10, 10, 10, 11, 11, 11, 11, 9, 9, 10, 10, 10, 10, 11, 11, 11, 11 };
-
 //加载地图
 void CrazyFighting::LoadMap()
 { 
@@ -15,6 +9,9 @@ void CrazyFighting::LoadMap()
 		t_scene.LoadTxtMap("map\\01\\background.txt");
 		t_scene.LoadTxtMap("map\\01\\obstacle.txt");
 		t_scene.LoadTxtMap("map\\01\\mask.txt");
+		t_scene.LoadTxtMap("map\\01\\stone.txt");
+		t_scene.LoadTxtMap("map\\01\\bush.txt");
+		t_scene.LoadTxtMap("map\\01\\box.txt");
 	}
 	else if (mapType == 1)
 	{
@@ -92,18 +89,19 @@ void CrazyFighting::UpdatePlayerPos()
 		{
 			player->SetSequence(player->FRAME_ATTACK, 20);
 		}
-		/*else
+		else
 		{
 			vCrazyManSet::iterator it;
 			for (it = npc_set.begin(); it != npc_set.end(); it++) {
 				if (player->CollideWith((*it)) && !(*it)->IsDead() && (*it)->IsVisible()) {
 					if (isDelayCollision == false) {
-						looseBlood = true;
 						updateLifeCount = true;
+						looseBlood = true;
+						
 					}
 				}
 			}
-		}*/
+		}
 	}
 }
 
@@ -122,6 +120,7 @@ void CrazyFighting::updatePlayerlife() {
 		player->SetActive(false);
 		player->SetVisible(false);
 		player->SetDead(true);
+		//player->SetSequence(player->FRAME_DIE, 70);
 		GameState = GAME_OVER;
 		if (mapType == 0) mapmusic01_buffer.Stop();
 		else if (mapType == 1) mapmusic02_buffer.Stop();
@@ -137,7 +136,15 @@ void CrazyFighting::UpdateAnimation()
 	vCrazyManSet::iterator it;
 	if (npc_set.size() > 0) {
 		for (it = npc_set.begin(); it != npc_set.end(); it++) {
-			(*it)->LoopFrame();
+
+			if ((*it)->IsDead())
+			{
+				if ((*it)->LoopFrameOnce())
+				{
+					(*it)->SetVisible(false);
+				}
+			}
+			if ((*it)->IsVisible() == true && (*it)->IsActive() == true) (*it)->LoopFrame();
 		}
 	}
 
@@ -221,7 +228,7 @@ void CrazyFighting::LoadNpc(int total)
 		spInfo.Ratio = 0.3f;
 		spInfo.Level = 0;
 		spInfo.Score = 0;
-		spInfo.Speed = 8;
+		spInfo.Speed = 4;
 		spInfo.Alpha = 255;
 		spInfo.Visible = true;
 		int sp_width = 40;
@@ -231,15 +238,26 @@ void CrazyFighting::LoadNpc(int total)
 		case 0:
 			spInfo.Dir = DIR_RIGHT;
 			spInfo.X = t_scene.getSceneY() + scn_height - 10 * sp_height;
-			spInfo.Y = t_scene.getSceneY() + scn_height - 10 * sp_height;
+			spInfo.Y = t_scene.getSceneY() + scn_height - 15 * sp_height;
 			break;
 		case 1:
 			spInfo.Dir = DIR_LEFT;
 			spInfo.X = t_scene.getSceneY() + scn_height - 10 * sp_height;
-			spInfo.Y = t_scene.getSceneY() + scn_height - 10 * sp_height;
+			spInfo.Y = t_scene.getSceneY() + scn_height - 15 * sp_height;
 			break;
 		}
-		npc_set.push_back(new CrazyMan(L".\\res\\sprite\\NPC1.png", 321, 284));
+		if (mapType == 0)
+		{
+			npc_set.push_back(new CrazyMan(L".\\res\\sprite\\NPC1.png", 321, 284));
+		}
+		else if (mapType == 1)
+		{
+			npc_set.push_back(new CrazyMan(L".\\res\\sprite\\NPC2.png", 321, 284));
+		}
+		else if (mapType == 2)
+		{
+			npc_set.push_back(new CrazyMan(L".\\res\\sprite\\NPC3.png", 321, 284));
+		}
 		CrazyMan* sp = npc_set.back();
 		sp->Initiate(spInfo);
 		sp->SetLayerTypeID(LAYER_NPC);
@@ -278,8 +296,8 @@ void CrazyFighting::UpdateNpcPos()
 			spAi->Wander((*it), t_scene.getBarrier());
 			if ((*it)->CollideWith(player) && player->getAttacking() == false) {
 				if (isDelayCollision == false) {
-					looseBlood = true;
 					updateLifeCount = true;
+					looseBlood = true;
 				}
 			}
 		}
@@ -411,33 +429,7 @@ void CrazyFighting::ArrowCollide(T_Sprite* arrow) {
 			arrow->SetActive(false);				//炮弹不可移
 			int x = arrow->GetX() - 33;
 			int y = arrow->GetY() - 33;
-			//LoadExplosion(x, y);
-
-			//explosionSound.Restore();
-			//explosionSound.Play(false);
 		}
-
-		// 如果NPC炮弹碰到了玩家
-		/*if (bomb->GetLayerTypeID() == LAYER_NPC_BOMB &&
-			bomb->CollideWith(player) &&
-			player->IsDead() == false && player->IsVisible() == true)
-		{
-
-			bomb->SetVisible(false);
-			bomb->SetActive(false);
-
-			int x = bomb->GetX() - player->GetWidth() / 2;
-			int y = bomb->GetY() - player->GetHeight() / 2;
-
-			LoadExplosion(x, y);
-			explosionSound.Play(false);
-
-			if (isDelayCollision == false)
-			{
-				looseBlood = true;
-				updateLifeCount = true;
-			}
-		}*/
 
 		// 如果玩家炮弹碰到了NPC
 		if (arrow->GetLayerTypeID() == LAYER_PLY_BOMB)
@@ -450,21 +442,11 @@ void CrazyFighting::ArrowCollide(T_Sprite* arrow) {
 						((*sp)->IsVisible()) && ((*sp)->IsActive()))
 					{
 						(*sp)->SetActive(false);
-						(*sp)->SetVisible(false);
+						(*sp)->SetSequence((*sp)->FRAME_DIE, 70);
 						(*sp)->SetDead(true);
+						ScoreCount = ScoreCount + 10;
 						arrow->SetActive(false);
 						arrow->SetVisible(false);
-						//NPC数目更新
-						//NpcNumber = NpcNumber - 1;
-						//LoadExplosion((*sp)->GetX(), (*sp)->GetY());
-						//explosionSound.Play(false);
-						//游戏过关升级处理
-						/*if (NpcNumber == 0)
-						{
-							GameState = GAME_UPGRADE;
-							upgradeGameLevel = true;
-						}*/
-
 						break;
 					}
 
@@ -481,8 +463,9 @@ void CrazyFighting::AttackCollide()
 		// 玩家触碰到NPC的处理
 		if (player->CollideWith((*p)) && !(*p)->IsDead() && (*p)->IsVisible())
 		{
-			(*p)->SetVisible(false);
+			//(*p)->SetVisible(false);
 			(*p)->SetActive(false);
+			(*p)->SetSequence((*p)->FRAME_DIE, 70);
 			(*p)->SetDead(true);
 			ScoreCount = ScoreCount + 10;
 		}
@@ -495,7 +478,7 @@ void CrazyFighting::GameInit()
 	lifeImg = NULL;
 	levelImg = NULL;
 	totalscoreBmp = NULL;
-	scoreImg = NULL;
+	//scoreImg = NULL;
 	GameState = GAME_START;
 	LoadImageRes();
 	RunMenuInit();
@@ -533,7 +516,9 @@ void CrazyFighting::GameLogic()
 		if (player->IsActive())	//移动玩家角色
 		{
 			UpdatePlayerPos();//移动玩家角色
-
+		}
+		if (player->IsDead() == false) 
+		{
 			// 记录玩家角色生成后的时间
 			player->SetEndTime(GetTickCount64());
 			// 判断玩家角色无敌时间是否结束
@@ -1294,7 +1279,7 @@ void CrazyFighting::PaintMapMenu(HDC hdc)
 void CrazyFighting::LoadImageRes()
 {
 	if (lifeImg == NULL) lifeImg = new T_Graph(L".\\res\\game\\life.png");
-	if (scoreImg == NULL) scoreImg = new T_Graph(L".\\res\\game\\score.png");
+	//if (scoreImg == NULL) scoreImg = new T_Graph(L".\\res\\game\\score.png");
 	if (levelImg == NULL) levelImg = new T_Graph(L".\\res\\game\\Level.png");
 	if (totalscoreBmp == NULL) totalscoreBmp = new T_Graph(L".\\res\\game\\totalscore.png");
 }
@@ -1332,11 +1317,12 @@ void CrazyFighting::MainGameInit()
 	LoadNpc(NPC_NUM);
 	LifeCount = 3;
 	ScoreCount = 0;
+	isDelayCollision = true;
 
 
 	player->SetActive(true);
 	player->setJumping(true);
-	player->setJumpSpeed(-20);
+	player->setJumpSpeed(0);
 	player->setFallen(false);
 }
 
@@ -1372,7 +1358,7 @@ void CrazyFighting::DisplayInfo(HDC hdc, int game_state)
 		levelImg->GetImageHeight(), 200
 	);
 	wstring LeveNum = L"当前关: ";
-	LeveNum.append(T_Util::int_to_wstring(GameLevel + 1));
+	LeveNum.append(T_Util::int_to_wstring(mapType + 1));
 	rect.X = (REAL)(x + iconW);
 	T_Graph::PaintText(hdc, rect, LeveNum.c_str(), (REAL)FontHeight, L"宋体",
 		Color(255, 255, 255, 0), FontStyleBold, StringAlignmentNear);

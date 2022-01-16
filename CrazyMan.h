@@ -31,7 +31,7 @@ public:
 	static int FRAME_FALL[20];
 	static int FRAME_JUMP[20];
 	static int FRAME_ATTACK[20];
-	static int FRAME_DIE[20];
+	static int FRAME_DIE[70];
 	static int FRAME_SHOOT[40];
 	static int FRAME_KICK[20];
 	static int FRAME_FLY[20];
