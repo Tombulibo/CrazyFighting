@@ -381,7 +381,7 @@ void CrazyFighting::LoadTrap(int num, int level)
 			int a = rand() % 3;
 			trap_Info.X = t_scene.getSceneX() + scn_width - (80 - 2 * i) * sp_width;
 
-			trap_Info.Y = t_scene.getSceneY() + scn_height - 1.4 * sp_height;
+			trap_Info.Y = t_scene.getSceneY() + scn_height - sp_height;
 			if (a == 0)
 				trap_set.push_back(new CrazyMan(L".\\res\\sprite\\trap\\1.png", 64, 64));
 			else if (a == 1)
