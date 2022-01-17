@@ -1,4 +1,5 @@
 #include "CrazyFighting.h"
+#include "resource.h"
 
 // WinMain函数
 int WINAPI WinMain(HINSTANCE h_instance, HINSTANCE hPrevInstance,
@@ -9,7 +10,7 @@ int WINAPI WinMain(HINSTANCE h_instance, HINSTANCE hPrevInstance,
 	// 然后将图标的标识替换构造函数中的两个NULL值
 	// 例如:如果图标标识为IDI_TANKNEW, 则两个NULL值都设为IDI_TANKNEW
 	CrazyFighting* game = new CrazyFighting(h_instance, WIN_CLASS, WinTitle,
-		NULL, NULL, WIN_WIDTH, WIN_HEIGHT);
+		IDI_ICON1, IDI_ICON1, WIN_WIDTH, WIN_HEIGHT);
 	T_Engine::pEngine = game;	// 必须将父类的静态指针指向构造好的子类
 	game->SetFrame(70);			// 设置游戏画面的刷新频率(可以调用FRAME_SPEED常量)
 	// 如果程序要以全屏幕方式启动, 请添加下面这行代码

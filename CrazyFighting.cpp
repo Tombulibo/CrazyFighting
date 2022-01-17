@@ -391,7 +391,7 @@ void CrazyFighting::LoadTrap(int num, int level)
 
 			// 初始化刚增加的项目
 
-			CrazyMan* sp = trap_set.back();
+			T_Sprite* sp = trap_set.back();
 			sp->Initiate(trap_Info);
 			sp->SetLayerTypeID(LAYER_NPC);
 
@@ -476,8 +476,9 @@ void CrazyFighting::UpdateNpcPos()
 			}
 		}
 	}
-	for (it = trap_set.begin(); it != trap_set.end(); it++) {
-		if ((*it)->CollideWith(player, 0) && player->getAttacking() == false)
+	vSpriteSet::iterator p;
+	for (p = trap_set.begin(); p != trap_set.end(); p++) {
+		if ((*p)->CollideWith(player, 0) && player->getAttacking() == false)
 		{
 			if (isDelayCollision == false) {
 				updateLifeCount = true;
@@ -746,6 +747,17 @@ void CrazyFighting::GameEnd()
 	mapmenu.DestroyAll();
 	aboutmenu.DestroyAll();
 	menuArea.Destroy();
+	playerShow1.Destroy();
+	playerShow2.Destroy();
+	playerShow3.Destroy();
+	mapShow1.Destroy();
+	mapShow2.Destroy();
+	mapShow3.Destroy();
+	gameoverimg.Destroy();
+	gamewinimg.Destroy();
+	xzh.Destroy();
+	cyt.Destroy();
+	jsy.Destroy();
 }
 
 //游戏绘制
@@ -797,30 +809,10 @@ void CrazyFighting::GamePaint(HDC hdc)
 	}
 	else if (GameState == GAME_OVER)
 	{
-		PaintMainGame(hdc);
-		RectF textRec;
-		textRec.X = 0.00;
-		textRec.Y = 0.00;
-		textRec.Width = (float)wnd_width;
-		textRec.Height = (float)wnd_height;
-		T_Graph::PaintBlank(
-			hdc, 0, 0, WIN_WIDTH, WIN_HEIGHT,
-			Color(150, 0, 0, 0));
-		T_Graph::PaintText(hdc, textRec, L"你死了", 100, L"黑体", Color::Red, FontStyleBold, StringAlignmentCenter);
 		PaintLastMenu(hdc);
 	}
 	else if (GameState == GAME_WIN)
 	{
-		PaintMainGame(hdc);
-		RectF textRec;
-		textRec.X = 0.00;
-		textRec.Y = 0.00;
-		textRec.Width = (float)wnd_width;
-		textRec.Height = (float)wnd_height;
-		T_Graph::PaintBlank(
-			hdc, 0, 0, WIN_WIDTH, WIN_HEIGHT,
-			Color(150, 255, 255, 255));
-		T_Graph::PaintText(hdc, textRec, L"挑战成功", 100, L"黑体", Color::Red, FontStyleBold, StringAlignmentCenter);
 		PaintLastMenu(hdc);
 	}
 }
@@ -949,10 +941,46 @@ void CrazyFighting::GameMouseAction(int x, int y, int Action)
 			else if (chooseState == 1)
 			{
 				playermenu.MenuMouseMove(x, y);
+				int index = playermenu.GetMenuIndex();
+				if (index >= 0)
+				{
+					switch (index)
+					{
+					case 0:
+						playerType = 0;
+						break;
+					case 1:
+						playerType = 1;
+						break;
+					case 2:
+						playerType = 2;
+						break;
+					case 3:
+						break;
+					}
+				}
 			}
 			else if (chooseState == 2)
 			{
 				mapmenu.MenuMouseMove(x, y);
+				int index = mapmenu.GetMenuIndex();
+				if (index >= 0)
+				{
+					switch (index)
+					{
+					case 0:
+						mapType = 0;
+						break;
+					case 1:
+						mapType = 1;
+						break;
+					case 2:
+						mapType = 2;
+						break;
+					case 3:
+						break;
+					}
+				}
 			}
 		}
 		if (GameState == GAME_ABOUT) aboutmenu.MenuMouseMove(x, y);
@@ -1125,7 +1153,26 @@ void CrazyFighting::GameMouseAction(int x, int y, int Action)
 		}
 		if (GameState == GAME_OVER)
 		{
-			int index = helpmenu.MenuMouseClick(x, y);
+			int index = lastmenu.MenuMouseClick(x, y);
+			if (index >= 0)
+			{
+				switch (index)
+				{
+				case 0://返回开始菜单
+					GameEnd();
+					GameInit();
+					GameState = GAME_START;
+					openmusic_buffer.Play(true);
+					break;
+				case 1://退出游戏
+					SendMessage(m_hWnd, WM_SYSCOMMAND, SC_CLOSE, 0);
+					break;
+				}
+			}
+		}
+		if (GameState == GAME_WIN)
+		{
+			int index = lastmenu.MenuMouseClick(x, y);
 			if (index >= 0)
 			{
 				switch (index)
@@ -1172,28 +1219,28 @@ void CrazyFighting::StartMenuInit()
 	startmenu.SetMenuInfo(menuInfo);
 
 	MENUITEM mItem1, mItem2, mItem3, mItem4;
-	x = (wndWidth - btn_width) / 2 - 20;			//开始按钮
+	x = (wndWidth - btn_width + 600) / 2 - 20;			//开始按钮
 	y = wndHeight / 2 - btn_height * 1.5;
 	mItem1.pos.x = x;
 	mItem1.pos.y = y;
 	mItem1.ItemName = menuItems[0];
 	startmenu.AddMenuItem(mItem1);
 
-	x = (wndWidth - btn_width) / 2 + 20;		//关于按钮
+	x = (wndWidth - btn_width + 600) / 2 + 20;		//关于按钮
 	y = wndHeight / 2;
 	mItem2.pos.x = x;
 	mItem2.pos.y = y;
 	mItem2.ItemName = menuItems[1];
 	startmenu.AddMenuItem(mItem2);
 
-	x = (wndWidth - btn_width) / 2 - 20;			//帮助按钮
+	x = (wndWidth - btn_width + 600) / 2 - 20;			//帮助按钮
 	y = wndHeight / 2 + btn_height * 1.5;
 	mItem3.pos.x = x;
 	mItem3.pos.y = y;
 	mItem3.ItemName = menuItems[2];
 	startmenu.AddMenuItem(mItem3);
 
-	x = (wndWidth - btn_width) / 2 + 20;		//退出按钮
+	x = (wndWidth - btn_width + 600) / 2 + 20;		//退出按钮
 	y = wndHeight / 2 + btn_height * 3;
 	mItem4.pos.x = x;
 	mItem4.pos.y = y;
@@ -1208,6 +1255,9 @@ void CrazyFighting::StartMenuInit()
 //关于菜单初始化
 void CrazyFighting::AboutMenuInit()
 {
+	xzh.LoadImageFile(L".\\res\\about\\xzh.jpg");
+	cyt.LoadImageFile(L".\\res\\about\\cyt.jpg");
+	jsy.LoadImageFile(L".\\res\\about\\jsy.jpg");
 	int x = 0, y = 0;
 	int btn_width = 0, btn_height = 0;
 	Color normalClr, focusClr;
@@ -1233,7 +1283,7 @@ void CrazyFighting::AboutMenuInit()
 	for (int i = 0; i < 2; i++) {
 		//设置菜单各项按钮位置
 		x = i * (btn_width + MENU_SPACE) + (wndWidth - 2 * btn_width - MENU_SPACE) / 2;
-		y = wnd_height - 1.5 * btn_height;
+		y = wnd_height - 2 * btn_height;
 		MENUITEM mItem;
 		mItem.pos.x = x;
 		mItem.pos.y = y;
@@ -1272,7 +1322,7 @@ void CrazyFighting::HelpMenuInit()
 	for (int i = 0; i < 2; i++) {
 		//设置菜单各项按钮位置
 		x = i * (btn_width + MENU_SPACE) + (wndWidth - 2 * btn_width - MENU_SPACE) / 2;
-		y = wnd_height - 1.5 * btn_height;
+		y = wnd_height - 2 * btn_height;
 		MENUITEM mItem;
 		mItem.pos.x = x;
 		mItem.pos.y = y;
@@ -1326,11 +1376,14 @@ void CrazyFighting::RunMenuInit()
 //游戏选人菜单初始化
 void CrazyFighting::PlayerMenuInit()
 {
+	playerShow1.LoadImageFile(L".\\res\\sprite\\Shooter.png");
+	playerShow2.LoadImageFile(L".\\res\\sprite\\Fighter.png");
+	playerShow3.LoadImageFile(L".\\res\\sprite\\Elemental.png");
 	int x = 0, y = 0;
 	int btn_width = 0, btn_height = 0;
 	Color normalClr, focusClr;
 	wstring menuItems[] = { L"女射手",L"狂战士",L"元素使",L"返回" };
-	playermenu.SetMenuBkg(L".\\res\\map\\01\\Background1.png");//设置背景图片
+	//playermenu.SetMenuBkg(L".\\res\\map\\01\\Background1.png");//设置背景图片
 	//长条形按钮菜单项
 	btn_width = 218;
 	btn_height = 74;
@@ -1348,9 +1401,9 @@ void CrazyFighting::PlayerMenuInit()
 	menuInfo.normalTextColor = normalClr;//正常状态文字颜色
 	menuInfo.focusTextColor = focusClr;	 //选中状态文字颜色
 	playermenu.SetMenuInfo(menuInfo);
-	for (int i = 0; i < 4; i++) {
-		x = i * (btn_width + MENU_SPACE) + (wndWidth - 4 * btn_width - MENU_SPACE) / 2;
-		y = wnd_height - 2 * btn_height;
+	for (int i = 0; i < 3; i++) {
+		x = i * (btn_width + MENU_SPACE) + (wndWidth - 3 * btn_width - MENU_SPACE) / 2;
+		y = wnd_height - 3 * btn_height;
 
 		MENUITEM mItem;
 		mItem.pos.x = x;
@@ -1358,6 +1411,15 @@ void CrazyFighting::PlayerMenuInit()
 		mItem.ItemName = menuItems[i];
 		playermenu.AddMenuItem(mItem);
 	}
+
+	x = (wndWidth - btn_width) / 2 + 5;
+	y = wnd_height - 2 * btn_height;
+	MENUITEM mItem;
+	mItem.pos.x = x;
+	mItem.pos.y = y;
+	mItem.ItemName = menuItems[3];
+	playermenu.AddMenuItem(mItem);
+
 	playermenu.SetClickSound(&mousedown_buffer);
 	playermenu.SetMoveSound(&mousemove_buffer);
 }
@@ -1365,11 +1427,14 @@ void CrazyFighting::PlayerMenuInit()
 //游戏选地图菜单初始化
 void CrazyFighting::MapMenuInit()
 {
+	mapShow1.LoadImageFile(L".\\res\\map\\01\\Background1.png");
+	mapShow2.LoadImageFile(L".\\res\\map\\02\\level2_Background.png");
+	mapShow3.LoadImageFile(L".\\res\\map\\03\\Background.png");
 	int x = 0, y = 0;
 	int btn_width = 0, btn_height = 0;
 	Color normalClr, focusClr;
 	wstring menuItems[] = { L"田园",L"矿洞",L"地狱",L"返回" };
-	mapmenu.SetMenuBkg(L".\\res\\map\\01\\Background1.png");//设置背景图片
+	//mapmenu.SetMenuBkg(L".\\res\\map\\01\\Background1.png");//设置背景图片
 	//长条形按钮菜单项
 	btn_width = 218;
 	btn_height = 74;
@@ -1387,9 +1452,9 @@ void CrazyFighting::MapMenuInit()
 	menuInfo.normalTextColor = normalClr;//正常状态文字颜色
 	menuInfo.focusTextColor = focusClr;	 //选中状态文字颜色
 	mapmenu.SetMenuInfo(menuInfo);
-	for (int i = 0; i < 4; i++) {
-		x = i * (btn_width + MENU_SPACE) + (wndWidth - 4 * btn_width - MENU_SPACE) / 2;
-		y = wnd_height - 2 * btn_height;
+	for (int i = 0; i < 3; i++) {
+		x = i * (btn_width + MENU_SPACE) + (wndWidth - 3 * btn_width - MENU_SPACE) / 2;
+		y = wnd_height - 3 * btn_height;
 
 		MENUITEM mItem;
 		mItem.pos.x = x;
@@ -1397,12 +1462,23 @@ void CrazyFighting::MapMenuInit()
 		mItem.ItemName = menuItems[i];
 		mapmenu.AddMenuItem(mItem);
 	}
+
+	x = (wndWidth - btn_width) / 2 + 5;
+	y = wnd_height - 2 * btn_height;
+	MENUITEM mItem;
+	mItem.pos.x = x;
+	mItem.pos.y = y;
+	mItem.ItemName = menuItems[3];
+	mapmenu.AddMenuItem(mItem);
+
 	mapmenu.SetClickSound(&mousedown_buffer);
 	mapmenu.SetMoveSound(&mousemove_buffer);
 }
 
 void CrazyFighting::LastMenuInit()
 {
+	gameoverimg.LoadImageFile(L".\\res\\game\\lose.png");
+	gamewinimg.LoadImageFile(L".\\res\\game\\win.png");
 	int x = 0, y = 0;
 	int btn_width = 0, btn_height = 0;
 	Color normalClr, focusClr;
@@ -1441,22 +1517,29 @@ void CrazyFighting::LastMenuInit()
 //开始菜单绘制
 void CrazyFighting::PaintStartMenu(HDC hdc)
 {
+	//T_Graph::PaintBlank(hdc, 0, 0, (float)wnd_width, (float)wnd_height, Color::Black, 140);
 	startmenu.DrawMenu(hdc);
 	RectF textRec;
-	textRec.X = 2;
-	textRec.Y = 2;
+	textRec.X = -302;
+	textRec.Y = 52;
 	textRec.Width = (float)wnd_width;
 	textRec.Height = (float)wnd_height / 4;
 	T_Graph::PaintText(hdc, textRec, L"疯狂大乱斗", 50, L"宋体", Color::Black, FontStyleBold, StringAlignmentCenter);
-	textRec.X = 0;
-	textRec.Y = 0;
-	T_Graph::PaintText(hdc, textRec, L"疯狂大乱斗", 50, L"宋体", Color::Red, FontStyleBold, StringAlignmentCenter);
-	textRec.X = 2;
-	textRec.Y = 52;
-	T_Graph::PaintText(hdc, textRec, L"CRAZY FIGHTING", 30, L"黑体", Color::Black, FontStyleBold, StringAlignmentCenter);
-	textRec.X = 0;
+	textRec.X = -300;
 	textRec.Y = 50;
+	T_Graph::PaintText(hdc, textRec, L"疯狂大乱斗", 50, L"宋体", Color::Red, FontStyleBold, StringAlignmentCenter);
+	textRec.X = -302;
+	textRec.Y = 102;
+	T_Graph::PaintText(hdc, textRec, L"CRAZY FIGHTING", 30, L"黑体", Color::Black, FontStyleBold, StringAlignmentCenter);
+	textRec.X = -300;
+	textRec.Y = 100;
 	T_Graph::PaintText(hdc, textRec, L"CRAZY FIGHTING", 30, L"黑体", Color::Red, FontStyleBold, StringAlignmentCenter);
+	textRec.X = 50;
+	textRec.Y = 170;
+	T_Graph::PaintText(hdc, textRec, L"版本: 1.0.0", 16, L"黑体", Color::Red, FontStyleBold, StringAlignmentNear);
+	textRec.X = 50;
+	textRec.Y = 200;
+	T_Graph::PaintText(hdc, textRec, L"(C) 2022 xzh cyt jsy", 16, L"宋体", Color::Red, FontStyleBold, StringAlignmentNear);
 }
 
 //关于菜单绘制
@@ -1466,29 +1549,64 @@ void CrazyFighting::PaintAboutMenu(HDC hdc)
 	aboutmenu.DrawMenu(hdc);
 
 	//绘制半透明黑色背景
-	T_Graph::PaintBlank(hdc, (float)wnd_width / 8, (float)wnd_height * 1 / 16, (float)wnd_width * 3 / 4, (float)wnd_height * 4 / 7, Color::Black, 140);
-	//绘制文字
+	T_Graph::PaintBlank(hdc, (float)wnd_width / 10, (float)wnd_height * 1 / 10, (float)wnd_width * 4 / 5, (float)wnd_height * 5 / 8, Color::Black, 140);
+
 	RectF textRec;
 	textRec.X = 0.00;
-	textRec.Y = 20.00;
+	textRec.Y = -10.00;
 	textRec.Width = (float)wnd_width;
-	textRec.Height = (float)wnd_height / 4;
-	T_Graph::PaintText(hdc, textRec, L"关于", 24, L"黑体", Color::White, FontStyleBold, StringAlignmentCenter);
+	textRec.Height = (float)wnd_height / 3;
+	T_Graph::PaintText(hdc, textRec, L"关于", 25, L"黑体", Color::White, FontStyleBold, StringAlignmentCenter);
 
-	textRec.X = wnd_width / 2 - 100;
-	textRec.Y = (float)wnd_height / 20 + 50;
-	T_Graph::PaintText(hdc, textRec, L"名称：实验十三", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
-	textRec.Y = (float)wnd_height * 2 / 20 + 50;
-	T_Graph::PaintText(hdc, textRec, L"选课班：选课1班", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
-	textRec.Y = (float)wnd_height * 3 / 20 + 50;
-	T_Graph::PaintText(hdc, textRec, L"原班级：软件工程1907班", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
-	textRec.Y = (float)wnd_height * 4 / 20 + 50;
-	T_Graph::PaintText(hdc, textRec, L"学号：8002119225", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
-	textRec.Y = (float)wnd_height * 5 / 20 + 50;
+	textRec.X = wnd_width / 2 - 250;
+	textRec.Y = (float)wnd_height * 1 / 30 + 15;
+	T_Graph::PaintText(hdc, textRec, L"疯狂大乱斗", 16, L"黑体", Color::White, FontStyleBold, StringAlignmentNear);
+	textRec.X = wnd_width / 2 + 100;
+	textRec.Y = (float)wnd_height * 1 / 30 + 15;
+	T_Graph::PaintText(hdc, textRec, L"版本: 1.0.0", 14, L"黑体", Color::White, FontStyleBold, StringAlignmentNear);
+	textRec.X = wnd_width / 2 - 250;
+	textRec.Y = (float)wnd_height * 2 / 30 + 15;
+	T_Graph::PaintText(hdc, textRec, L"Copyright 2022 xzh cyt jsy", 14, L"黑体", Color::White, FontStyleBold, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 3 / 30 + 15;
+	T_Graph::PaintText(hdc, textRec, L"All Rights Reserved", 14, L"黑体", Color::White, FontStyleBold, StringAlignmentNear);
+	textRec.X = wnd_width / 2 + 100;
+	textRec.Y = (float)wnd_height * 3 / 30 + 15;
+	T_Graph::PaintText(hdc, textRec, L"保留所有权利", 14, L"黑体", Color::White, FontStyleBold, StringAlignmentNear);
+
+
+	textRec.X = wnd_width / 2 - 300;
+	textRec.Y = (float)wnd_height * 2 / 30 + 200;
+	T_Graph::PaintText(hdc, textRec, L"姓名：程元通", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 3 / 30 + 200;
+	T_Graph::PaintText(hdc, textRec, L"学号：8002119224", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 4 / 30 + 200;
+	T_Graph::PaintText(hdc, textRec, L"班级：软工1907班", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 5 / 30 + 230;
+	T_Graph::PaintText(hdc, textRec, L"分工：田园地图设计，\n角色设计，\n游戏功能实现，\n菜单设计。", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+
+	textRec.X = wnd_width / 2 - 50;
+	textRec.Y = (float)wnd_height * 2 / 30 + 200;
 	T_Graph::PaintText(hdc, textRec, L"姓名：夏正豪", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
-	textRec.Y = (float)wnd_height * 6 / 20 + 50;
-	T_Graph::PaintText(hdc, textRec, L"时间：2021年12月23日", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 3 / 30 + 200;
+	T_Graph::PaintText(hdc, textRec, L"学号：8002119225", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 4 / 30 + 200;
+	T_Graph::PaintText(hdc, textRec, L"班级：软工1907班", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 5 / 30 + 230;
+	T_Graph::PaintText(hdc, textRec, L"分工：矿洞地图设计，\n角色设计，\n游戏功能实现，\n菜单设计。", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	
+	textRec.X = wnd_width / 2 + 200;
+	textRec.Y = (float)wnd_height * 2 / 30 + 200;
+	T_Graph::PaintText(hdc, textRec, L"姓名：姜恕宇", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 3 / 30 + 200;
+	T_Graph::PaintText(hdc, textRec, L"学号：8002119227", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 4 / 30 + 200;
+	T_Graph::PaintText(hdc, textRec, L"班级：软工1907班", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 5 / 30 + 230;
+	T_Graph::PaintText(hdc, textRec, L"分工：地狱地图设计，\n角色设计，\n游戏功能实现，\n菜单设计。", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
 
+	cyt.PaintImage(hdc, (wnd_width - 90) / 2 - 250, 240, 90, 120);
+	xzh.PaintImage(hdc, (wnd_width - 90) / 2, 240, 90, 120);
+	jsy.PaintImage(hdc, (wnd_width - 90) / 2 + 250, 240, 90, 120);
 }
 
 //帮助菜单绘制
@@ -1496,7 +1614,7 @@ void CrazyFighting::PaintHelpMenu(HDC hdc)
 {
 	helpmenu.DrawMenu(hdc);
 	//绘制半透明黑色背景
-	T_Graph::PaintBlank(hdc, (float)wnd_width / 8, (float)wnd_height * 1 / 10, (float)wnd_width * 3 / 4, (float)wnd_height * 4 / 7, Color::Black, 140);
+	T_Graph::PaintBlank(hdc, (float)wnd_width / 10, (float)wnd_height * 1 / 10, (float)wnd_width * 4 / 5, (float)wnd_height * 5 / 8, Color::Black, 140);
 
 	RectF textRec;
 	textRec.X = 0.00;
@@ -1505,32 +1623,142 @@ void CrazyFighting::PaintHelpMenu(HDC hdc)
 	textRec.Height = (float)wnd_height / 3;
 	T_Graph::PaintText(hdc, textRec, L"帮助", 36, L"黑体", Color::White, FontStyleBold, StringAlignmentCenter);
 
-	textRec.X = wnd_width / 2 - 250;
+	textRec.X = wnd_width / 2 - 350;
 	textRec.Y = (float)wnd_height / 20 + 80;
-	T_Graph::PaintText(hdc, textRec, L"默认键盘操作，按上下左右方向移动玩家角色。", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	T_Graph::PaintText(hdc, textRec, L"按左、右方向键移动玩家角色，按上方向键进行玩家跳跃。", 20, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
 	textRec.Y = (float)wnd_height * 2 / 20 + 80;
-	T_Graph::PaintText(hdc, textRec, L"点击游戏运行菜单，可选择切换操作方式为鼠标操作。", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	T_Graph::PaintText(hdc, textRec, L"移动过程中按shift键可以加速。", 20, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
 	textRec.Y = (float)wnd_height * 3 / 20 + 80;
-	T_Graph::PaintText(hdc, textRec, L"在鼠标操作过程中，若按下键盘，则自动切换为键盘操作。", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	T_Graph::PaintText(hdc, textRec, L"按空格键普通攻击，按C键远程攻击。", 20, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
 	textRec.Y = (float)wnd_height * 4 / 20 + 80;
-	T_Graph::PaintText(hdc, textRec, L"可选择重新开始游戏。", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	T_Graph::PaintText(hdc, textRec, L"如果玩家被哥布林和幽灵碰到或者掉入陷阱，玩家生命值减1。", 20, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
 	textRec.Y = (float)wnd_height * 5 / 20 + 80;
-	T_Graph::PaintText(hdc, textRec, L"请尽情在游戏地图中探索。", 14, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
-
+	T_Graph::PaintText(hdc, textRec, L"当玩家生命值归0时，游戏结束。", 20, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 6 / 20 + 80;
+	T_Graph::PaintText(hdc, textRec, L"玩家的普通攻击和远程攻击都可以消灭哥布林和幽灵。", 20, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
+	textRec.Y = (float)wnd_height * 7 / 20 + 80;
+	T_Graph::PaintText(hdc, textRec, L"当消灭完全部的哥布林和幽灵后，挑战成功。", 20, L"黑体", Color::White, FontStyleRegular, StringAlignmentNear);
 }
 
+// 选人菜单绘制
 void CrazyFighting::PaintPlayerMenu(HDC hdc)
 {
+	if (mapType == 0)
+	{
+		mapShow1.PaintImage(hdc, 0, 0, 1024, 768);
+
+	}
+	else if (mapType == 1)
+	{
+		mapShow2.PaintImage(hdc, 0, 0, 1024, 768);
+	}
+	else if (mapType == 2)
+	{
+		mapShow3.PaintImage(hdc, 0, 0, 1024, 768);
+	}
+
+	if (playerType == 0)
+	{
+		playerShow1.PaintFrame(playerShow1.GetBmpHandle(), hdc, (wnd_width - 321 * 1.5) / 2, (wnd_height - 500 * 1.5) / 2 + 60, 0, 18, 321, 284, 1.5);
+
+	}
+	else if (playerType == 1)
+	{
+		playerShow2.PaintFrame(playerShow2.GetBmpHandle(), hdc, (wnd_width - 321 * 1.5) / 2, (wnd_height - 500 * 1.5) / 2 + 60, 0, 18, 321, 284, 1.5);
+	}
+	else if (playerType == 2)
+	{
+		playerShow3.PaintFrame(playerShow3.GetBmpHandle(), hdc, (wnd_width - 321 * 1.5) / 2, (wnd_height - 500 * 1.5) / 2 + 60, 0, 18, 321, 284, 1.5);
+	}
+
+	RectF textRec;
+	textRec.X = 0;
+	textRec.Y = 32;
+	textRec.Width = (float)wnd_width;
+	textRec.Height = (float)wnd_height / 4;
+	T_Graph::PaintText(hdc, textRec, L"选择人物", 40, L"宋体", Color::Black, FontStyleBold, StringAlignmentCenter);
+	textRec.X = 0;
+	textRec.Y = 30;
+	T_Graph::PaintText(hdc, textRec, L"选择人物", 40, L"宋体", Color::Brown, FontStyleBold, StringAlignmentCenter);
+
 	playermenu.DrawMenu(hdc);
 }
 
+// 选地图菜单绘制
 void CrazyFighting::PaintMapMenu(HDC hdc)
 {
+	if (mapType == 0)
+	{
+		mapShow1.PaintImage(hdc, 0, 0, 1024, 768);
+
+	}
+	else if (mapType == 1)
+	{
+		mapShow2.PaintImage(hdc, 0, 0, 1024, 768);
+	}
+	else if (mapType == 2)
+	{
+		mapShow3.PaintImage(hdc, 0, 0, 1024, 768);
+	}
+
+	if (playerType == 0)
+	{
+		playerShow1.PaintFrame(playerShow1.GetBmpHandle(), hdc, (wnd_width - 321 * 1.5) / 2, (wnd_height - 500 * 1.5) / 2 + 60, 0, 18, 321, 284, 1.5);
+
+	}
+	else if (playerType == 1)
+	{
+		playerShow2.PaintFrame(playerShow2.GetBmpHandle(), hdc, (wnd_width - 321 * 1.5) / 2, (wnd_height - 500 * 1.5) / 2 + 60, 0, 18, 321, 284, 1.5);
+	}
+	else if (playerType == 2)
+	{
+		playerShow3.PaintFrame(playerShow3.GetBmpHandle(), hdc, (wnd_width - 321 * 1.5) / 2, (wnd_height - 500 * 1.5) / 2 + 60, 0, 18, 321, 284, 1.5);
+	}
+
+	RectF textRec;
+	textRec.X = 0;
+	textRec.Y = 32;
+	textRec.Width = (float)wnd_width;
+	textRec.Height = (float)wnd_height / 4;
+	T_Graph::PaintText(hdc, textRec, L"选择地图", 40, L"宋体", Color::Black, FontStyleBold, StringAlignmentCenter);
+	textRec.X = 0;
+	textRec.Y = 30;
+	T_Graph::PaintText(hdc, textRec, L"选择地图", 40, L"宋体", Color::Brown, FontStyleBold, StringAlignmentCenter);
+
+
 	mapmenu.DrawMenu(hdc);
 }
 
 void CrazyFighting::PaintLastMenu(HDC hdc)
 {
+	if (GameState == GAME_OVER)
+	{
+		PaintMainGame(hdc);
+		RectF textRec;
+		textRec.X = 0.00;
+		textRec.Y = 100.00;
+		textRec.Width = (float)wnd_width;
+		textRec.Height = (float)wnd_height;
+		T_Graph::PaintBlank(
+			hdc, 0, 0, WIN_WIDTH, WIN_HEIGHT,
+			Color(150, 0, 0, 0));
+		T_Graph::PaintText(hdc, textRec, L"你死了", 60, L"宋体", Color::Red, FontStyleBold, StringAlignmentCenter);
+		gameoverimg.PaintFrame(gameoverimg.GetBmpHandle(), hdc, (wnd_width - 128 * 2) / 2, (wnd_height - 200 * 2) / 2, 0, 1, 128, 128, 2);
+	}
+	else if (GameState == GAME_WIN)
+	{
+		PaintMainGame(hdc);
+		RectF textRec;
+		textRec.X = 0.00;
+		textRec.Y = 100.00;
+		textRec.Width = (float)wnd_width;
+		textRec.Height = (float)wnd_height;
+		T_Graph::PaintBlank(
+			hdc, 0, 0, WIN_WIDTH, WIN_HEIGHT,
+			Color(150, 255, 255, 255));
+		T_Graph::PaintText(hdc, textRec, L"挑战成功", 60, L"宋体", Color::Red, FontStyleBold, StringAlignmentCenter);
+		gamewinimg.PaintFrame(gamewinimg.GetBmpHandle(), hdc, (wnd_width - 128 * 2) / 2, (wnd_height - 200 * 2) / 2, 0, 1, 128, 128, 2);
+	}
 	lastmenu.DrawMenu(hdc);
 }
 
@@ -1547,21 +1775,8 @@ void CrazyFighting::ClearGameLevel()
 {
 	npc_set.clear();		npc_set.swap(vector<CrazyMan*>());
 	arrow_set.clear();		arrow_set.swap(vector<T_Sprite*>());
-	/*
-	vCrazyManSet::iterator it;
-	for (it = npc_set.begin(); it != npc_set.end(); it++)
-	{
-		delete *it;
-		(*it) = NULL;
-	}
-	vSpriteSet::iterator p;
-	for (p = arrow_set.begin(); p != arrow_set.end(); p++)
-	{
-		delete* p;
-		(*p) = NULL;
-	}*/
-	//npc_set.clear();
-	//arrow_set.clear();
+	trap_set.clear();		trap_set.swap(vector<T_Sprite*>());
+
 	t_scene.getSceneLayers()->clear();
 	t_scene.RemoveAll();
 }
@@ -1588,7 +1803,7 @@ void CrazyFighting::MainGameInit()
 //游戏运行绘制
 void CrazyFighting::PaintMainGame(HDC hdc)
 {	
-	back.PaintBlank(hdc, 0, 0, wnd_width, wnd_height, Color(3, 127, 237));
+	//back.PaintBlank(hdc, 0, 0, wnd_width, wnd_height, Color(3, 127, 237));
 	t_scene.Draw(hdc, 0, 0);	
 	menuArea.PaintImage(hdc, wnd_width - 181, 0, 181, 9, 255);//绘制运行菜单点击区域
 	runmenu.DrawMenu(hdc, 0, 0, 255, GAME_RUN);

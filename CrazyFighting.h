@@ -23,7 +23,8 @@ private:
     Horizontal_Scene t_scene;		//游戏场景
     CrazyMan* player;		//游戏玩家
     vCrazyManSet npc_set;   //NPC角色集合
-    vCrazyManSet trap_set;        //陷阱集
+    vSpriteSet arrow_set;	                // 箭容器
+    vSpriteSet trap_set;        //陷阱集
 
     int playerType;         //玩家类型，0为女射手，1为狂战士，2为元素使
     int mapType;            //地图类型，0为田园，1为矿洞，2为地狱
@@ -36,7 +37,7 @@ private:
 
  
     //游戏菜单类的对象
-    T_Graph back;
+    //T_Graph back;
     T_Graph menuArea;				//游戏运行菜单区域
     T_Menu startmenu;				//游戏开始菜单类对象
     T_Menu aboutmenu;				//游戏关于菜单类对象
@@ -44,12 +45,25 @@ private:
     MyMenu runmenu;					//游戏运行菜单类对象
     T_Menu playermenu;              //游戏选人菜单
     T_Menu mapmenu;                 //游戏选地图菜单
-    T_Menu lastmenu;
-    int chooseState;                //游戏选择状态
+    T_Graph playerShow1;
+    T_Graph playerShow2;
+    T_Graph playerShow3;
+    T_Graph mapShow1;
+    T_Graph mapShow2;
+    T_Graph mapShow3;
 
+    T_Menu lastmenu;
+    T_Graph gameoverimg;
+    T_Graph gamewinimg;
+
+    T_Graph xzh;
+    T_Graph cyt;
+    T_Graph jsy;
+    
     //………………………………………………………………………………………………………
     // 与游戏逻辑控制相关的变量
     //………………………………………………………………………………………………………
+    int chooseState;                //游戏选择状态
     long BonusLoadStartTime;						// 奖励加载计时
     long BubbleLoadStartTime;						// Bubble加载计时
 
@@ -102,7 +116,6 @@ private:
     void UpdateNpcPos();                            // 更新NPC位置
     void UpdateAnimation();							// 更新角色动画帧序列号
 
-    vSpriteSet arrow_set;	                // 箭容器
     void LoadArrow(int iTime);				// 加载炮弹
     void UpdateArrowPos();					// 更新炮弹位置
     void ArrowCollide(T_Sprite* arrow);		// 检测炮弹是否击中目标
