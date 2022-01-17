@@ -85,6 +85,11 @@ private:
     AudioDXBuffer mousemove_buffer;
     AudioDXBuffer gameovermusic_buffer;
     AudioDXBuffer victorymusic_buffer;
+    AudioDXBuffer shootmusic_buffer;
+    AudioDXBuffer attackmusic_buffer;
+    AudioDXBuffer npcdiedmusic_buffer;
+    AudioDXBuffer maleplayerdiedmusic_buffer;
+    AudioDXBuffer femaleplayerdiedmusic_buffer;
 
     //定义功能函数
     void LoadPlayer();								// 加载游戏玩家角色
